@@ -1,6 +1,6 @@
 # NerdPack - Silver Routines
 
-Routines are supported:
+Routines raid ready:
 
 Holy Paladin
 

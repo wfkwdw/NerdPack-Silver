@@ -29,11 +29,10 @@ local GUI = {
 	--------------------------------
 	{type = 'header', 	text = 'Tank', align = 'center'},											
 	{type = 'spinner', 	text = 'Blessing of Sacrifice (Health %)', 		key = 'T_BoS', 	default = 30},
-	{type = 'spinner', 	text = 'Lay on Hands (Health %)', 				key = 'T_LoH', 	default = 25},		
+	--{type = 'spinner', 	text = 'Lay on Hands (Health %)', 				key = 'T_LoH', 	default = 25},		
 	{type = 'spinner', 	text = 'Light of the Martyr (Health %)', 		key = 'T_LotM', default = 35},
 	{type = 'spinner', 	text = 'Holy Shock (Health %)', 				key = 'T_HS', 	default = 90},
-	{type = 'spinner', 	text = 'Light of the Martyr (Health %)', 		key = 'T_LotM', default = 40},
-	{type = 'spinner', 	text = 'Bestow Faith (Health %)', 				key = 'T_BF', 	default = 80},
+	--{type = 'spinner', 	text = 'Bestow Faith (Health %)', 				key = 'T_BF', 	default = 80},
 	{type = 'spinner', 	text = 'Flash of Light (Health %)', 			key = 'T_FoL', 	default = 75},
 	{type = 'spinner', 	text = 'Holy Light (Health %)', 				key = 'T_HL', 	default = 90},
 	{type = 'ruler'},{type = 'spacer'},
@@ -262,7 +261,7 @@ local inCombat = {
 	{ DPS, 'toggle(dps) & target.enemy & target.infront & lowestpredicted.health >= UI(G_DPS)'},
 	{ moving, 'player.moving'},
 	--{ lowMana, 'player.mana <= 20'},
-	{ healing, '!player.moving & player.mana > 20'},
+	{ healing, '!player.moving'},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront'},
 }
 
