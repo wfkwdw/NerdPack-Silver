@@ -1,0 +1,92 @@
+
+local GUI = {
+}
+
+local PreCombat = {
+	--actions.precombat=flask,type=flask_of_the_seventh_demon
+	--actions.precombat+=/food,type=azshari_salad
+	--actions.precombat+=/bear_form
+	--# Snapshot raid buffed stats before combat begins and pre-potting is done.
+	--actions.precombat+=/snapshot_stats
+}
+
+local Interrupts = {
+	{'Skull Bash'},
+	{'Typhoon', 'talent(4,3)&cooldown(Skull Bash).remains>gcd'},
+	{'Mighty Bash', 'talent(4,1)&cooldown(Skull Bash).remains>gcd'},
+}
+
+local Survival = {
+	--{'/run CancelShapeshiftForm()', 'form>0&talent(3,3)&!player.buff(Rejuvenation)'},
+	--{'Rejuvenation', 'talent(3,3)&!player.buff(Rejuvenation)', 'player'},
+	--{'/run CancelShapeshiftForm()', 'form>0&talent(3,3)&player.health<=75'},
+	--{'Swiftmend', 'talent(3,3)&player.health<=75', 'player'},
+	--actions+=/barkskin
+	{'Barkskin'},
+	--actions+=/bristling_fur,if=buff.ironfur.remains<2&rage<40
+	{'Bristling Fur', 'player.buff(Ironfur).remains<2&player.rage<40'},
+	{'Mark of Ursol', '!player.buff(Mark of Ursol)&player.incdmg_magic(5)>1'},
+	--actions+=/ironfur,if=buff.ironfur.down|rage.deficit<25
+	{'Ironfur', '!player.buff(Ironfur)||rage.deficit<25'},
+	--actions+=/frenzied_regeneration,if=!ticking&incoming_damage_6s/health.max>0.25+(2-charges_fractional)*0.15
+	{'Frenzied Regeneration', '!player.buff(Frenzied Regeneration)&player.incdmg(6)/player.health.max>{0.25+{2-cooldown(Frenzied Regeneration).charges}*0.15}'},
+	--	if not BuffPresent(frenzied_regeneration_buff) and IncomingDamage(6) / MaxHealth() > 0.25 + { 2 - Charges(frenzied_regeneration count=0) } * 0.15 Spell(frenzied_regeneration)
+}
+
+local Cooldowns = {
+ 	--actions+=/blood_fury
+	{'Bloodfury'},
+ 	--actions+=/berserking
+	{'Berserking'},
+ 	--actions+=/use_item,slot=trinket2
+	--{'', ''},
+}
+
+local xCombat = {
+	{'Moonfire', 'player.buff(Galactic Guardian)&rage.deficit>=20'},
+ 	--actions+=/pulverize,cycle_targets=1,if=buff.pulverize.down
+	{'Pulverize', 'talent(7,3)&!player.buff(Pulverize)'},
+ 	--actions+=/mangle
+	{'Mangle'},
+ 	--actions+=/pulverize,cycle_targets=1,if=buff.pulverize.remains<gcd
+	{'Pulverize', 'talent(7,3)&player.buff(Pulverize).remains<gcd'},
+ 	--actions+=/lunar_beam
+	{'Lunar Beam'},
+ 	--actions+=/incarnation
+	{'Incarnation: Guardian of Ursoc'},
+ 	--actions+=/thrash_bear,if=active_enemies>=2
+	{'Thrash', 'player.area(8).enemies>=2'},
+ 	--actions+=/pulverize,cycle_targets=1,if=buff.pulverize.remains<3.6
+	{'Pulverize', 'talent(7,3)&player.buff(Pulverize).remains<3.6'},
+ 	--actions+=/thrash_bear,if=talent.pulverize.enabled&buff.pulverize.remains<3.6
+	{'Thrash', 'talent(7,3)&player.buff(Pulverize).remains<3.6'},
+ 	--actions+=/moonfire,cycle_targets=1,if=!ticking
+	{'Moonfire', '!target.dot(Moonfire).ticking||target.dot(Moonfire).remains<=gcd'},
+	{'&Maul', 'rage.deficit<=20'},
+	{'Swipe'},
+}
+
+local Keybinds = {
+	-- Pause
+	{'%pause', 'keybind(alt)'},
+}
+
+local inCombat = {
+	{Keybinds},
+	{Survival, 'player.health<100'},
+	{Cooldowns, 'toggle(cooldowns)'},
+	{'Bear Form', 'form~=1'},
+	{xCombat, 'target.range<8&target.infront'}
+}
+
+local outCombat = {
+	{Keybinds},
+}
+
+NeP.CR:Add(104, {
+	name = '[Silver] Druid - Guardian',
+	  ic = inCombat,
+	 ooc = outCombat,
+	 gui = GUI,
+	load = exeOnLoad
+})
