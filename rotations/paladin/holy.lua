@@ -22,6 +22,8 @@ local GUI = {
 	{type = 'checkbox',	text = 'Holy Avenger',							key = 'HA', 	default = false},
 	{type = 'checkbox',	text = 'Lay on Hands',							key = 'LoH', 	default = false},
 	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
+	{type = 'checkspin',text = 'Healing Potion',					key = 'P_HP', 	default = false},
+	{type = 'checkspin',text = 'Mana Potion',						key = 'P_MP', 	default = false},
 	{type = 'ruler'},{type = 'spacer'},
 		
 	--------------------------------
@@ -77,7 +79,8 @@ local interrupts = {
 }
 
 local survival = {
-	{ '#127834', 'player.health <= 40'}, -- Health Pot
+	{ '#127834', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'}, -- Health Pot
+	{ '#127835', 'UI(P_MP_check) & player.mana <= UI(P_MP_spin)'}, -- Mana Pot
 	{ 'Divine Protection', 'player.buff(Blessing of Sacrifice)'},
 }
 
@@ -229,7 +232,7 @@ local cooldowns = {
 	{ 'Blessing of Sacrifice', 'tank.health <= UI(T_BoS)', 'tank'}, 
 	{ 'Blessing of Sacrifice', 'tank2.health <= UI(T_BoS)', 'tank2'}, 
 	
-	--{ '#trinket2', 'player.area(40,75).heal >= 3'},
+	--{ '#trinket2', 'player.area(40,95).heal >= 3'},
 }
 
 local moving = {
@@ -270,6 +273,7 @@ local outCombat = {
 	{ tank},
 	--{ 'Flash of Light', 'ldebuff(25771).debuff(25771)', 'ldebuff(25771)'},
 	{ topUp, 'keybind(lcontrol)'},
+	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 }
 
 NeP.CR:Add(65, {
