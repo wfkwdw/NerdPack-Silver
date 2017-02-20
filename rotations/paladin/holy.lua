@@ -1,6 +1,5 @@
 --[[
 	TO DO:
-	Clean up GUI
 	Add Nighthold encounter support
 	Add mythic 5 man utility
 	Add support for all talents
@@ -22,19 +21,17 @@ local GUI = {
 	{type = 'checkbox',	text = 'Holy Avenger',							key = 'HA', 	default = false},
 	{type = 'checkbox',	text = 'Lay on Hands',							key = 'LoH', 	default = false},
 	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
-	{type = 'checkspin',text = 'Healing Potion',					key = 'P_HP', 	default = false},
-	{type = 'checkspin',text = 'Mana Potion',						key = 'P_MP', 	default = false},
+	{type = 'checkspin',text = 'Healing Potion',						key = 'P_HP', 	default = false},
+	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = false},
 	{type = 'ruler'},{type = 'spacer'},
 		
 	--------------------------------
 	-- TANK
 	--------------------------------
 	{type = 'header', 	text = 'Tank', align = 'center'},											
-	{type = 'spinner', 	text = 'Blessing of Sacrifice (Health %)', 		key = 'T_BoS', 	default = 30},
-	--{type = 'spinner', 	text = 'Lay on Hands (Health %)', 				key = 'T_LoH', 	default = 25},		
+	{type = 'spinner', 	text = 'Blessing of Sacrifice (Health %)', 		key = 'T_BoS', 	default = 30},	
 	{type = 'spinner', 	text = 'Light of the Martyr (Health %)', 		key = 'T_LotM', default = 35},
 	{type = 'spinner', 	text = 'Holy Shock (Health %)', 				key = 'T_HS', 	default = 90},
-	--{type = 'spinner', 	text = 'Bestow Faith (Health %)', 				key = 'T_BF', 	default = 80},
 	{type = 'spinner', 	text = 'Flash of Light (Health %)', 			key = 'T_FoL', 	default = 75},
 	{type = 'spinner', 	text = 'Holy Light (Health %)', 				key = 'T_HL', 	default = 90},
 	{type = 'ruler'},{type = 'spacer'},
@@ -43,10 +40,10 @@ local GUI = {
 	-- LOWEST
 	--------------------------------
 	{type = 'header', 	text = 'Lowest', align = 'center'},
-	{type = 'spinner', 	text = 'Lay on Hands (Health %)', 				key = 'L_LoH', 	default = 25},
+	{type = 'spinner', 	text = 'Lay on Hands (Health %)', 				key = 'L_LoH', 	default = 10},
 	{type = 'spinner', 	text = 'Holy Shock (Health %)', 				key = 'L_HS', 	default = 90},
 	{type = 'spinner', 	text = 'Light of the Martyr (Health %)', 		key = 'L_LotM', default = 40},
-	{type = 'spinner', 	text = 'Light of the Martyr moving (Health %)', key = 'L_LotMm', default = 65},
+	{type = 'spinner', 	text = 'Light of the Martyr moving (Health %)', key = 'L_LotMm',default = 65},
 	{type = 'spinner', 	text = 'Flash of Light (Health %)', 			key = 'L_FoL', 	default = 70},
 	{type = 'spinner', 	text = 'Holy Light (Health %)', 				key = 'L_HL', 	default = 90},
 	
@@ -67,10 +64,6 @@ local exeOnLoad = function()
 		icon = 'Interface\\ICONS\\spell_holy_purify', 
 	})
 end
-
-local utility = {
-
-}
 
 -- Cast that should be interrupted
 local interrupts = {
@@ -188,7 +181,7 @@ local aoeHealing = {
 local healing = {
 	{ aoeHealing},
 	
-	-- Tyrs Deliverance (Needs to be here because has cast time)
+	-- Tyrs Deliverance
 	{ '200652', 'player.area(15,75).heal >= 3'},
 	{ '200652', 'player.area(22,75).heal >= 3 & player.buff(Rule of Law)'},
 	
@@ -198,9 +191,12 @@ local healing = {
 	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.buff(Infusion of Light)', 'lowestpredicted'},
 	{ 'Flash of Light', 'player.buff(Infusion of Light).duration <= 3 & player.buff(Infusion of Light)', 'lowestpredicted'},
 	
-	{ 'Light of the Martyr', 'tank.health <= UI(T_LotM)', 'tank'},
-	{ 'Light of the Martyr', 'tank2.health <= UI(T_LotM)', 'tank2'},
-	{ 'Light of the Martyr', 'lowestpredicted.health <= UI(L_LotM)', 'lowestpredicted'},
+	-- Need player health spinner added
+	{{
+		{ 'Light of the Martyr', 'tank.health <= UI(T_LotM)', 'tank'},
+		{ 'Light of the Martyr', 'tank2.health <= UI(T_LotM)', 'tank2'},
+		{ 'Light of the Martyr', 'lowestpredicted.health <= UI(L_LotM)', 'lowestpredicted'},
+	}, 'player.health >= 40'},
 	
 	{ 'Holy Shock', 'tank.health <= UI(T_HS)', 'tank'},
 	{ 'Holy Shock', 'tank2.health <= UI(T_HS)', 'tank2'},
@@ -208,6 +204,7 @@ local healing = {
 	
 	{ 'Flash of Light', 'tank.health <= UI(T_FoL)', 'tank'},
 	{ 'Flash of Light', 'tank2.health <= UI(T_FoL)', 'tank2'},
+	{ '!Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.casting(Holy Light)', 'lowestpredicted'},
 	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL)', 'lowestpredicted'},
 	
 	{ 'Judgment', 'target.enemy'}, -- Keep up dmg reduction buff
@@ -224,6 +221,7 @@ local emergency = {
 }
 
 local cooldowns = {
+	-- Need to rewrite for Raid and 5 Man
 	{ 'Lay on Hands', 'UI(LoH) & lowestpredicted.health <= UI(L_LoH) & !lowestpredicted.debuff(Forbearance).any', 'lowestpredicted'},
 	{ 'Aura Mastery', 'UI(AM) & player.area(40,40).heal >= 4'},
 	{ 'Avenging Wrath', 'UI(AW) & player.area(35,65).heal >= 4 & player.spell(Holy Shock).cooldown = 0'},
@@ -238,8 +236,11 @@ local cooldowns = {
 local moving = {
 	{ aoeHealing},
 	
-	{ 'Light of the Martyr', 'tank.health <= UI(T_LotM)', 'tank'},
-	{ 'Light of the Martyr', 'lowestpredicted.health <= UI(L_LotMm)', 'lowestpredicted'},
+	{{
+		{ 'Light of the Martyr', 'tank.health <= UI(T_LotM)', 'tank'},
+		{ 'Light of the Martyr', 'tank2.health <= UI(T_LotM)', 'tank2'},
+		{ 'Light of the Martyr', 'lowestpredicted.health <= UI(L_LotM)', 'lowestpredicted'},
+	}, 'player.health >= 40'},
 	
 	{ 'Holy Shock', 'tank.health <= UI(T_HS)', 'tank'},
 	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
@@ -247,14 +248,8 @@ local moving = {
 	{ 'Judgment', 'target.enemy'},
 }
 
-local lowMana = {
-	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
-	{ 'Holy Light', 'lowestpredicted.health <= 60', 'lowestpredicted'},
-}
-
 local inCombat = {
 	{ topUp, 'keybind(lcontrol)'},
-	{ utility}, -- Raid utility!
 	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
 	{ '%dispelall', 'toggle(disp) & spell(Cleanse).cooldown = 0'},
@@ -263,16 +258,16 @@ local inCombat = {
 	{ tank},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront & lowestpredicted.health >= UI(G_DPS)'},
 	{ moving, 'player.moving'},
-	--{ lowMana, 'player.mana <= 20'},
 	{ healing, '!player.moving'},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront'},
 }
 
 local outCombat = {
-	--{ DPS, 'keybind(lcontrol)'},
+	-- Need to prevent this while eating
 	{ tank},
-	--{ 'Flash of Light', 'ldebuff(25771).debuff(25771)', 'ldebuff(25771)'},
 	{ topUp, 'keybind(lcontrol)'},
+	
+	-- Prepot
 	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 }
 
