@@ -46,8 +46,6 @@ local GUI = {
 	{type = 'spinner', 	text = 'Light of the Martyr moving (Health %)', key = 'L_LotMm',default = 65},
 	{type = 'spinner', 	text = 'Flash of Light (Health %)', 			key = 'L_FoL', 	default = 70},
 	{type = 'spinner', 	text = 'Holy Light (Health %)', 				key = 'L_HL', 	default = 90},
-	
-	
 }
 
 local exeOnLoad = function()
@@ -84,11 +82,7 @@ local topUp = {
 
 local DPS = {
 	{'/startattack', '!isattacking'},
-	{ '26573', { -- Consecration
-		'target.range <= 6',
-		'target.enemy',
-		'!player.moving'
-	}},
+	{ 'Consecration', 'target.range <= 6 & target.enemy & !player.moving'},
 	{ 'Blinding Light', 'player.area(8).enemies >= 3'},
 	{ 'Holy Shock', 'UI(O_HS)', 'target'},
 	{ 'Holy Prism', nil, 'target'},
@@ -107,7 +101,7 @@ local tank = {
 
 local encounters = {
 	-- Time Release
-	{ 'Holy Shock', 'lowest.debuff(Time Release)', 'lowest'},
+	{ 'Holy Shock', 'lowest.debuff(Time Release)', 	'lowest'},
 	{ 'Holy Shock', 'lowest2.debuff(Time Release)', 'lowest2'},
 	{ 'Holy Shock', 'lowest3.debuff(Time Release)', 'lowest3'},
 	{ 'Holy Shock', 'lowest4.debuff(Time Release)', 'lowest4'},

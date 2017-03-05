@@ -203,16 +203,16 @@ local lowest = {
 	{ 'Regrowth', 'player.buff(Clearcasting)', 'lowest'},
 	
 	-- Apply Rejuv to 10 lowests players
-    { 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest1'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest2'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest3'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest4'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest5'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest6'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest7'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest8'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest9'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuv) & !lowest1.buff', 'lowest10'},
+    { 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest1'},
+	{ 'Rejuvenation', 'lowest2.health <= UI(lrejuvmove) & !lowest2.buff', 'lowest2'},
+	{ 'Rejuvenation', 'lowest3.health <= UI(lrejuvmove) & !lowest3.buff', 'lowest3'},
+	{ 'Rejuvenation', 'lowest4.health <= UI(lrejuvmove) & !lowest4.buff', 'lowest4'},
+	{ 'Rejuvenation', 'lowest5.health <= UI(lrejuvmove) & !lowest5.buff', 'lowest5'},
+	{ 'Rejuvenation', 'lowest6.health <= UI(lrejuvmove) & !lowest6.buff', 'lowest6'},
+	{ 'Rejuvenation', 'lowest7.health <= UI(lrejuvmove) & !lowest7.buff', 'lowest7'},
+	{ 'Rejuvenation', 'lowest8.health <= UI(lrejuvmove) & !lowest8.buff', 'lowest8'},
+	{ 'Rejuvenation', 'lowest9.health <= UI(lrejuvmove) & !lowest9.buff', 'lowest9'},
+	{ 'Rejuvenation', 'lowest10.health <= UI(lrejuvmove) & !lowest10.buff', 'lowest10'},
 	
 	-- Swiftmend
 	{ 'Swiftmend', 'lowest.health <= UI(lsm) & lowest.buff(Rejuvenation)', 'lowest'},
@@ -230,15 +230,15 @@ local moving = {
 	
 	-- Apply Rejuv to 10 lowests players
     { 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest1'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest2'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest3'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest4'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest5'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest6'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest7'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest8'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest9'},
-	{ 'Rejuvenation', 'lowest1.health <= UI(lrejuvmove) & !lowest1.buff', 'lowest10'},
+	{ 'Rejuvenation', 'lowest2.health <= UI(lrejuvmove) & !lowest2.buff', 'lowest2'},
+	{ 'Rejuvenation', 'lowest3.health <= UI(lrejuvmove) & !lowest3.buff', 'lowest3'},
+	{ 'Rejuvenation', 'lowest4.health <= UI(lrejuvmove) & !lowest4.buff', 'lowest4'},
+	{ 'Rejuvenation', 'lowest5.health <= UI(lrejuvmove) & !lowest5.buff', 'lowest5'},
+	{ 'Rejuvenation', 'lowest6.health <= UI(lrejuvmove) & !lowest6.buff', 'lowest6'},
+	{ 'Rejuvenation', 'lowest7.health <= UI(lrejuvmove) & !lowest7.buff', 'lowest7'},
+	{ 'Rejuvenation', 'lowest8.health <= UI(lrejuvmove) & !lowest8.buff', 'lowest8'},
+	{ 'Rejuvenation', 'lowest9.health <= UI(lrejuvmove) & !lowest9.buff', 'lowest9'},
+	{ 'Rejuvenation', 'lowest10.health <= UI(lrejuvmove) & !lowest10.buff', 'lowest10'},
 }
 
 local emergency = {

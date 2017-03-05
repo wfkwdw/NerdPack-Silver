@@ -126,28 +126,14 @@ local cooldowns = {
 }
 
 local singleTarget = {
-	{ '31925', 'talent(2,3)'},
-	{ "20271", { -- Judgement
-		'target.range <= 30'
-	}},
-	{ '204019', { -- Blessed Hammer
-		'target.range <= 8',
-		'target.enemy',
-		'!player.lastcast(204019)',
-		'target.debuff(204301)'
-	}},
-	{ "26573", { -- Consecration
-		"target.range <= 8",
-		"target.enemy",
-		'!player.buff',
-		'!player.moving'
-	}},
-	{ '31935'}, -- Avengers Shield
-	{ '204019', { -- Blessed Hammer
-		'target.range <= 8',
-		'target.enemy'
-	}},
-	{ '/startattack'},
+	{ 'Soul Carver'},
+	{ 'Soul Cleave', 'player.pain >= 80'},
+	{ 'Immolation Aura'},
+	{ 'Felblade'},
+	{ 'Fel Eruption'},
+	{ 'Shear', 'player.buff(Blade Turning)'},
+	{ 'Fracture', 'player.pain >= 60'},
+	{ 'Shear'},
 }
 
 local inCombat = {
@@ -166,8 +152,8 @@ local outCombat = {
 	{PreCombat}
 }
 
-NeP.CR:Add(66, {
-	name = '[Silver] Paladin - Protection',
+NeP.CR:Add(581, {
+	name = '[Silver] Demon Hunter - Vengeance',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,
