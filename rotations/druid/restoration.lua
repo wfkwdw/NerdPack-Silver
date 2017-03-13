@@ -176,8 +176,9 @@ local treeForm = {
 
 local tank = {
 	-- Lifebloom on the tank
-	{ 'Lifebloom', 'focus.buff(Lifebloom).duration <= 5', 'focus'},
-	{ 'Lifebloom', 'tank.buff(Lifebloom).duration <= 5 & !focus.exists', 'tank'},
+	{ 'Lifebloom', '!lowest1(TANK).buff(Lifebloom)&!lowest2(TANK).buff(Lifebloom)', 'lowest1(TANK)'},
+	--{ 'Lifebloom', 'focus.buff(Lifebloom).duration <= 5', 'focus'},
+	--{ 'Lifebloom', 'tank.buff(Lifebloom).duration <= 5 & !focus.exists', 'tank'},
 	
 	-- Regrowth on tank
 	{'Regrowth', 'focus.health <= UI(trg) & !player.moving', 'focus'},

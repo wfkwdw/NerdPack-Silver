@@ -9,8 +9,9 @@ local GUI = {
 	{type = 'header', 	text = 'Generic', align = 'center'},
 	{type = 'spinner', 	text = 'DPS while lowest health%', 				key = 'G_DPS', 	default = 70},
 	{type = 'spinner', 	text = 'Critical health%', 						key = 'G_CHP', 	default = 30},
+	{type = 'spinner', 	text = 'Mana Restore', 							key = 'P_MR', 	default = 20},
 	{type = 'checkbox',	text = 'Offensive Holy Shock',					key = 'O_HS', 	default = false},
-	{type = 'ruler'},{type = 'spacer'},
+	{type = 'ruler'}, {type = 'spacer'},
 	
 	--------------------------------
 	-- Toggles
@@ -23,7 +24,7 @@ local GUI = {
 	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
 	{type = 'checkspin',text = 'Healing Potion',						key = 'P_HP', 	default = false},
 	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = false},
-	{type = 'ruler'},{type = 'spacer'},
+	{type = 'ruler'}, {type = 'spacer'},
 		
 	--------------------------------
 	-- TANK
@@ -34,7 +35,7 @@ local GUI = {
 	{type = 'spinner', 	text = 'Holy Shock (Health %)', 				key = 'T_HS', 	default = 90},
 	{type = 'spinner', 	text = 'Flash of Light (Health %)', 			key = 'T_FoL', 	default = 75},
 	{type = 'spinner', 	text = 'Holy Light (Health %)', 				key = 'T_HL', 	default = 90},
-	{type = 'ruler'},{type = 'spacer'},
+	{type = 'ruler'}, {type = 'spacer'},
 	
 	--------------------------------
 	-- LOWEST
@@ -81,7 +82,7 @@ local topUp = {
 }
 
 local DPS = {
-	{'/startattack', '!isattacking'},
+	{ '/startattack', '!isattacking'},
 	{ 'Consecration', 'target.range <= 6 & target.enemy & !player.moving'},
 	{ 'Blinding Light', 'player.area(8).enemies >= 3'},
 	{ 'Holy Shock', 'UI(O_HS)', 'target'},
@@ -161,6 +162,9 @@ local encounters = {
 	{ 'Flash of Light', 'lowest20.debuff(Time Release).duration >= 1', 'lowest28'},
 	{ 'Flash of Light', 'lowest20.debuff(Time Release).duration >= 1', 'lowest29'},
 	{ 'Flash of Light', 'lowest20.debuff(Time Release).duration >= 1', 'lowest30'},
+	
+	-- M Bot
+	{ 'Divine Protection', 'player.debuff(Toxic Spores)'},
 }
 
 local aoeHealing = {
@@ -173,6 +177,21 @@ local aoeHealing = {
 }
 
 local healing = {
+	-- Add an Aura of Sacrifice rotation here!
+	--(Wings and Holy Avenger and Tyrs pre cast)
+	--(Bestow Faith or Hammer pre cast)
+	--(Divine Shield pre cast)
+	--Judgement of Light 
+	--Aura Mastery 
+
+	{{
+		{ 'Avenging Wrath'},
+		{ 'Holy Avenger'},
+		{ 'Holy Shock', nil, 'lowestpredicted'},
+		{ 'Light of Dawn'},
+		{ 'Flash of Light', nil, 'lowestpredicted'},
+	}, 'player.buff(Aura Mastery) & talent(5,2)'},
+		
 	{ aoeHealing},
 	
 	-- Tyrs Deliverance
@@ -196,9 +215,11 @@ local healing = {
 	{ 'Holy Shock', 'tank2.health <= UI(T_HS)', 'tank2'},
 	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
 	
+	{ 'Flash of Light', 'lbuff(200654).health <= UI(L_FoL)', 'lbuff(200654)'},
+	
 	{ 'Flash of Light', 'tank.health <= UI(T_FoL)', 'tank'},
 	{ 'Flash of Light', 'tank2.health <= UI(T_FoL)', 'tank2'},
-	{ '!Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.casting(Holy Light)', 'lowestpredicted'},
+	{ '!Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.casting(Holy Light) & player.casting.percent <= 50', 'lowestpredicted'},
 	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL)', 'lowestpredicted'},
 	
 	{ 'Judgment', 'target.enemy'}, -- Keep up dmg reduction buff
@@ -242,7 +263,17 @@ local moving = {
 	{ 'Judgment', 'target.enemy'},
 }
 
+local manaRestore = {
+	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
+	{ 'Holy Light', 'tank.health <= UI(T_HL)', 'tank'},
+	{ 'Holy Light', 'tank2.health <= UI(T_HL)', 'tank2'},
+	{ 'Holy Light', 'lowestpredicted.health <= UI(L_HL)', 'lowestpredicted'},
+	
+	{ 'Judgment', 'target.enemy'},
+}
+
 local inCombat = {
+	{ pause, 'keybind(lalt)'},
 	{ topUp, 'keybind(lcontrol)'},
 	{ survival}, 
 	{ interrupts, 'target.interruptAt(35)'},
@@ -252,7 +283,8 @@ local inCombat = {
 	{ tank},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront & lowestpredicted.health >= UI(G_DPS)'},
 	{ moving, 'player.moving'},
-	{ healing, '!player.moving'},
+	{ manaRestore, 'player.mana <= UI(P_MR)'},
+	{ healing, '!player.moving & player.mana >= UI(P_MR)'},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront'},
 }
 
@@ -261,7 +293,8 @@ local outCombat = {
 	{ tank},
 	{ topUp, 'keybind(lcontrol)'},
 	
-	-- Prepot
+	-- Precombat
+	{ 'Bestow Faith', 'pull_timer <= 3', 'tank'},
 	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 }
 

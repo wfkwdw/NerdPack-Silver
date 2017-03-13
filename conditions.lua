@@ -4,6 +4,12 @@ local _, Silver = ...
 -----------------------------------MISC-----------------------------------------
 --------------------------------------------------------------------------------
 
+NeP.DSL:Register("isshooting", function()
+  -- Checks if the player has autoattack toggled currently
+  -- Use {'/startattack', '!isattacking'}, at the top of a CR to force autoattacks
+  return IsCurrentSpell(75)
+end)
+
 --NeP.DSL:Register('equipped', function(target, item)
 -- if IsEquippedItem(item) then return true else return false end
 --end)

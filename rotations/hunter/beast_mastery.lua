@@ -114,7 +114,7 @@ local ST = {
 	{'Multi-Shot', 'target.area(8).enemies > 4 & {pet.buff(Beast Cleave).remains < gcd.max||!pet.buff(Beast Cleave)} & toggle(AoE)'},
 	{'Multi-Shot', 'target.area(8).enemies > 1 & {pet.buff(Beast Cleave).remains < gcd.max*2||!pet.buff(Beast Cleave)} & toggle(AoE)'},
 	{'Chimaera Shot', 'talent(2,3) & player.focus < 90'},
-	{'Cobra Shot', '{talent(7,2) & {cooldown(Bestial Wrath).remains >= 4 & {player.buff(Bestial Wrath) & cooldown(Kill Command).remains >= 2}||player.focus > 119}}||{!talent(7,2) & player.focus > 90}'},	
+	{'/cast Cobra Shot', '{talent(7,2) & {cooldown(Bestial Wrath).remains >= 4 & {player.buff(Bestial Wrath) & cooldown(Kill Command).remains >= 2}||player.focus > 119}}||{!talent(7,2) & player.focus > 90}'},	
 }
 
 local Keybinds = {
