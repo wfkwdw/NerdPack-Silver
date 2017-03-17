@@ -147,7 +147,6 @@ local singleTarget = {
 		'target.range <= 8',
 		'target.enemy'
 	}},
-	{ '/startattack'},
 }
 
 local inCombat = {
