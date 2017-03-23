@@ -24,14 +24,13 @@ local exeOnLoad = function()
 end
 
 local target = {
-	{{ -- Targeting
-		{ '/targetenemy [noexists]', { -- Target an enemy
-			'!target.exists',
-		}},
-	}},
+	{ '/targetenemy [noexists]', '!target.exists'},
 }
 
 local legionEvents = {
+	----------------
+	---- 5 Mans ----
+	----------------
 	-- Tank Dummy
 	{ '53600', 'player.buff.duration <= 2.5 & target.casting(Uber Strike) & !player.lastcast'},
 	
@@ -59,12 +58,15 @@ local legionEvents = {
 	{ '53600', 'player.buff.duration <= 2.5 & player.debuff(Dent Armor) & !player.lastcast'},
 	{ '53600', 'player.buff.duration <= 2.5 & target.channeling(Piercing Missiles) & !player.lastcast'},
 	
-	---------------
-	-- Nighthold --
-	---------------
+	-----------------
+	--- Nighthold ---
+	-----------------
+	-- Skorpyron
+	{ '53600', 'target.threat == 100 & player.buff.duration <= 1.5 & target.casting(Arcanoslash) & !player.lastcast'},
 	
 	-- Trilliax
-	
+	{ '53600', 'player.buff.duration <= 1.5 & target.casting(Arcane Slash) & !player.lastcast'},
+
 	-- Spellblade
 	{ '53600', 'player.buff.duration <= 1.5 & target.channeling(Annihilate) & !player.lastcast'},
 	
@@ -103,22 +105,23 @@ local cooldowns = {
 
 	{ 'Seraphim', 'player.spell(Shield of the Righteous).charges > 2'},
 	
-	--actions.prot+=/avenging_wrath,if=!talent.seraphim.enabled
 	{ 'Avenging Wrath', '!talent(7,2)'},
-	--actions.prot+=/avenging_wrath,if=talent.seraphim.enabled&buff.seraphim.up
 	{ 'Avenging Wrath', 'talent(7,2) & player.buff(Seraphim)'},
 
-	--actions.prot+=/lay_on_hands,if=health.pct<15
+	-- Add UI toggle for LoH
 	{ 'Lay on Hands', 'player.health < 15'},
+	{ 'Lay on Hands', 'lowest.health < 15'},
 	
+	-- Add UI toggle for trinket
 	{ '#trinket2', 'player.health <= 75'},
 }
 
 local rotation = {
 	{ 'Avenger\'s Shield', 'talent(2,3) & player.spell(Judgment).charges < 1'},
+	{ 'Avenger\'s Shield', 'target.area(10).enemies >= 2'},
 	{ 'Judgment'},
 	{ 'Blessed Hammer', 'talent(1,2) & player.area(12).enemies >= 1 & !player.lastcast' }, 
-	{ 'Consecration', 'target.range <= 8'},
+	{ 'Consecration', 'player.area(8).enemies >= 1'},
 	{ 'Avenger\'s Shield'},
 	{ 'Hammer of the Righteous', '!talent(1,2)'},
 }
