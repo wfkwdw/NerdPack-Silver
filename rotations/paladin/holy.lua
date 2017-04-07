@@ -200,6 +200,8 @@ local healing = {
 	
 	{ encounters, 'UI(ENC)'},
 	
+	{ 'Light of the Martyr', 'player.buff(Maraad\'s Dying Breath) & lowestpredicted.health <= UI(L_FoL)', 'lowestpredicted'},
+	
 	-- Infusion of Light
 	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.buff(Infusion of Light)', 'lowestpredicted'},
 	{ 'Flash of Light', 'player.buff(Infusion of Light).duration <= 3 & player.buff(Infusion of Light)', 'lowestpredicted'},
