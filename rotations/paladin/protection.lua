@@ -18,8 +18,8 @@ local GUI = {
 
 local exeOnLoad = function()
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
-	print('|cffADFF2F --- |rPALADIN |cffADFF2FProtection |r')
-	print('|cffADFF2F --- |rRecommended Talents: 1/2 - 2/2 - 3/3 - 4/1 - 5/2 - 6/2 - 7/3')
+	print('|cffADFF2F --- |rSilver Paladin |cffADFF2FProtection |r')
+	print('|cffADFF2F --- |rMost Talents Supported')
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
 
@@ -73,13 +73,14 @@ local legionEvents = {
 	-- Krosus
 	{ '53600', 'player.buff.duration <= 1.5 & target.casting(Slam) & !player.lastcast'},
 	{ '53600', 'player.buff.duration <= 1.5 & target.casting(Orb of Destruction) & !player.lastcast'},
+	{ '53600', 'player.buff.duration <= 1.5 & player.debuff(Searing Brand).count >= 3 & !player.lastcast'},
 }
 
 
 local interrupts = {
-	{'Rebuke'},
-	{'Hammer of Justice', 'spell(Rebuke).cooldown > gcd'},
-	{'Arcane Torrent', 'target.range<=8&spell(Rebuke).cooldown>gcd&!prev_gcd(Rebuke)'},
+	{ 'Rebuke'},
+	{ 'Hammer of Justice', 'spell(Rebuke).cooldown > gcd'},
+	{ 'Arcane Torrent', 'target.range<=8&spell(Rebuke).cooldown>gcd&!prev_gcd(Rebuke)'},
 }
 
 local activeMitigation = {
@@ -105,38 +106,41 @@ local cooldowns = {
 
 	{ 'Seraphim', 'player.spell(Shield of the Righteous).charges > 2'},
 	
-	{ 'Avenging Wrath', '!talent(7,2)'},
-	{ 'Avenging Wrath', 'talent(7,2) & player.buff(Seraphim)'},
+	{ 'Avenging Wrath', '!talent(7,2) & target.range <= 10'},
+	{ 'Avenging Wrath', 'talent(7,2) & player.buff(Seraphim) & target.range <= 10'},
 
 	-- Add UI toggle for LoH
 	{ 'Lay on Hands', 'player.health < 15'},
-	{ 'Lay on Hands', 'lowest.health < 15'},
+	--{ 'Lay on Hands', 'lowest.health < 15'},
 	
 	-- Add UI toggle for trinket
 	{ '#trinket2', 'player.health <= 75'},
 }
 
 local rotation = {
+	{ 'Consecration', '!player.buff & player.area(8).enemies >= 1'},
 	{ 'Avenger\'s Shield', 'talent(2,3) & player.spell(Judgment).charges < 1'},
 	{ 'Avenger\'s Shield', 'target.area(10).enemies >= 2'},
+	{ 'Blinding Light', 'player.area(10).enemies >= 2'},
 	{ 'Judgment'},
 	{ 'Blessed Hammer', 'talent(1,2) & player.area(12).enemies >= 1 & !player.lastcast' }, 
 	{ 'Consecration', 'player.area(8).enemies >= 1'},
 	{ 'Avenger\'s Shield'},
+	{ 'Blessed Hammer', 'talent(1,2) & player.area(12).enemies >= 1' }, 
 	{ 'Hammer of the Righteous', '!talent(1,2)'},
 }
 
 local inCombat = {
-	{'/startattack', '!isattacking'},
-	--{ target},
+	{ '/startattack', '!isattacking & target.health >= 1'},
+	{ target},
 	{ interrupts, 'target.interruptAt(50)'},
 	{ activeMitigation},
-	{ cooldowns, 'toggle(cooldowns)'},
+	{ cooldowns, 'toggle(cooldowns) & target.range <= 10'},
 	{ rotation, 'target.infront'}
 }
 
 local outCombat = {
-
+	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 }
 
 NeP.CR:Add(66, {

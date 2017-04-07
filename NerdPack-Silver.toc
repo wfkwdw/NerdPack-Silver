@@ -21,6 +21,8 @@ rotations\shaman\elemental.lua
 rotations\druid\restoration.lua
 rotations\druid\guardian.lua
 
+rotations\monk\brewmaster.lua
+
 rotations\hunter\marksmanship.lua
 rotations\hunter\beast_mastery.lua
 
