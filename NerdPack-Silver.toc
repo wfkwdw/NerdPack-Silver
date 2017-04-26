@@ -13,6 +13,9 @@ rotations\paladin\protection.lua
 rotations\paladin\holy.lua
 rotations\paladin\retribution.lua
 
+rotations\rogue\assassination.lua
+rotations\rogue\outlaw.lua
+
 rotations\demonhunter\vengeance.lua
 
 rotations\shaman\restoration.lua

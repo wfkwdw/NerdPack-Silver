@@ -203,7 +203,7 @@ local healing = {
 	{ 'Light of the Martyr', '!player & player.buff(Maraad\'s Dying Breath) & lowestpredicted.health <= UI(L_FoL)', 'lowestpredicted'},
 	
 	-- Infusion of Light
-	{ 'Flash of Light', 'player.buff(Infusion of Light).count >= 2', 'lowestpredicted'},
+	--{ 'Flash of Light', 'player.buff(Infusion of Light).count >= 2', 'lowestpredicted'},
 	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.buff(Infusion of Light)', 'lowestpredicted'},
 	{ 'Flash of Light', 'player.buff(Infusion of Light).duration <= 3 & player.buff(Infusion of Light)', 'lowestpredicted'},
 	
@@ -255,9 +255,9 @@ local moving = {
 	{ aoeHealing},
 	
 	{{
-		{ 'Light of the Martyr', 'tank.health <= UI(T_LotM)', 'tank'},
-		{ 'Light of the Martyr', 'tank2.health <= UI(T_LotM)', 'tank2'},
-		{ 'Light of the Martyr', 'lowestpredicted.health <= UI(L_LotM)', 'lowestpredicted'},
+		{ 'Light of the Martyr', '!player & tank.health <= UI(T_LotM)', 'tank'},
+		{ 'Light of the Martyr', '!player & tank2.health <= UI(T_LotM)', 'tank2'},
+		{ 'Light of the Martyr', '!player & lowestpredicted.health <= UI(L_LotM)', 'lowestpredicted'},
 	}, 'player.health >= 40'},
 	
 	{ 'Holy Shock', 'tank.health <= UI(T_HS)', 'tank'},

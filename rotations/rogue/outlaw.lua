@@ -1,0 +1,150 @@
+NeP.DSL:Register('rtb', function()
+	local jollyRoger = UnitBuff('player', 'Jolly Roger')
+	local grandMelee = UnitBuff('player', 'Grand Melee')
+	local sharkinfestedWaters = UnitBuff('player', 'Shark Infested Waters')
+	local trueBearing = UnitBuff('player', 'True Bearing')
+	local burriedTreasure = UnitBuff('player', 'Buried Treasure')
+	local broadsides = UnitBuff('player', 'Broadsides')
+	local buffCount = 0
+	
+	if jollyRoger then
+		buffCount = buffCount + 1
+		--print('Have Jolly Roger')
+			else
+		buffCount = buffCount
+	end
+	if grandMelee then
+		buffCount = buffCount + 1
+		--print('Have Jolly Roger')
+			else
+		buffCount = buffCount
+	end
+	if sharkinfestedWaters then
+		buffCount = buffCount + 1
+		--print('Have Jolly Roger')
+			else
+		buffCount = buffCount
+	end
+	if trueBearing then
+		buffCount = buffCount + 2
+		--print('Have Jolly Roger')
+			else
+		buffCount = buffCount
+	end
+	if burriedTreasure then
+		buffCount = buffCount + 1
+		--print('Have Jolly Roger')
+			else
+		buffCount = buffCount
+	end
+	if broadsides then
+		buffCount = buffCount + 1
+		--print('Have Jolly Roger')
+			else
+		buffCount = buffCount
+	end
+	--print(buffCount)
+	return buffCount
+end)
+
+local GUI = {
+	-- Survival
+	{type = 'header', text = 'Survival', align = 'center'},
+	{type = 'checkspin', text = 'Crimson Vial', key = 'cv', default_check = true, default_spin = 65},
+	{type = 'checkspin', text = 'Riposte', key = 'rip', default_check = true, default_spin = 35},
+	{type = 'ruler'},{type = 'spacer'},
+	
+	--Cooldowns
+	{type = 'header', text = 'Cooldowns when toggled on', align = 'center'},
+	{type = 'ruler'},{type = 'spacer'},} 
+
+local exeOnLoad = function()
+	print('|cffADFF2F ----------------------------------------------------------------------|r')
+	print('|cffADFF2F --- ')
+	print('|cffADFF2F --- ')
+	print('|cffADFF2F ----------------------------------------------------------------------|r')
+
+end
+
+local target = {
+	{{ -- Targeting
+		{ '/targetenemy [noexists]', { -- Target an enemy
+			'!target.exists',
+		}},
+	}},
+}
+
+local Keybinds = {
+	{ 'Grappling Hook', nil, '
+}
+
+local interrupts = {
+	{ 'Kick'},
+	{ 'Gouge', '!player.lastcast(Kick)'},
+	{ 'Between the Eyes', '!player.lastcast(Kick) & player.combopoints >= 1'},
+	{ 'Arcane Torrent', 'target.range <= 8 & spell(Kick).cooldown > gcd & !prev_gcd(Rebuke)'},
+}
+
+local survival = {
+	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
+	{ 'Riposte', 'player.health <= UI(rip)'},
+}
+
+local cooldowns = {
+	{ 'Adrenaline Rush'},
+	{ 'Curse of the Dreadblades'},
+}
+
+local singleTarget = {
+	{ 'Tricks of the Trade', '!tank.buff', 'tank'},
+	{ 'Blade Flurry', 'player.area(7).enemies >= 2 & !player.buff(Blade Flurry)'},
+	{ 'Blade Flurry', 'player.area(7).enemies <= 1 & player.buff(Blade Flurry)'},
+	{ 'Roll the Bones', 'player.combopoints >= 4 & player.rtb <= 1 & !player.lastcast'},
+	{ 'Ghostly Strike', 'target.debuff.duration <= 4.5'},
+	{ cooldowns, 'toggle(cooldowns)'},
+	{ 'Marked for Death', 'player.combopoints <= 1'},
+	{ 'Run Through', 'player.combopoints >= 6'},
+	{ 'Pistol Shot', 'player.buff(Opportunity) & player.combopoints <= 4'},
+	{ 'Saber Slash'}
+}
+
+--[[
+	Always open from Stealth Icon Stealth. This opener assumes you have  Icon Hidden Blade.
+
+	Cast Marked for Death Icon Marked for Death on the boss 10 seconds before the pull if no short lifespan adds will spawn in the opener.
+	Cast Roll the Bones Icon Roll the Bones at 2 seconds before the countdown.
+	Use Potion of the Old War Icon Potion of the Old War potion.
+	Cast Ambush Icon Ambush.
+	Cast Ghostly Strike Icon Ghostly Strike.
+	If Bloodlust Icon Bloodlust is up, cast Saber Slash Icon Saber Slash (otherwise skip this Saber Slash).
+	Activate Adrenaline Rush Icon Adrenaline Rush.
+	Cast Saber Slash Icon Saber Slash.
+	If your current Roll the Bones Icon Roll the Bones is 1 of or any combination of True Bearing Icon True Bearing, Shark Infested Waters Icon Shark Infested Waters, Jolly Roger Icon Jolly Roger, or Grand Melee Icon Grand Melee, then cast Run Through Icon Run Through. If not, instead cast Roll the Bones Icon Roll the Bones.
+	Pool Energy until ~60 and activate  Icon Curse of the Dreadblades.
+	Alternate between Saber Slash Icon Saber Slash and Run Through Icon Run Through. Only spend your Opportunity Icon Opportunity procs if you have insufficient Energy to cast Saber Slash Icon Saber Slash.
+	With your last Saber Slash Icon Saber Slash during  Icon Curse of the Dreadblades you should reroll if you have only a single buff.
+	Keep re-rolling until you have 2 buffs or True Bearing Icon True Bearing.
+]]--
+
+local inCombat = {
+	{ 'Ambush', 'player.buff(Stealth)'},
+	{ '/startattack', '!isattacking'},
+	--{ target},
+	{ Keybinds},
+	{ survival},
+	{ interrupts, 'target.interruptAt(30)'},
+	{ singleTarget, 'target.infront'}
+}
+
+local outCombat = {
+	{ Keybinds},
+	{ PreCombat}
+}
+
+NeP.CR:Add(260, {
+	name = '[Silver] Rogue - Outlaw',
+	  ic = inCombat,
+	 ooc = outCombat,
+	 gui = GUI,
+	load = exeOnLoad
+})
