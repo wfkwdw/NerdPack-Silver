@@ -1,19 +1,20 @@
 local GUI = {
 	-- General
-	{type = 'header', text = 'General', align = 'center'},
-	{type = 'spinner', text = 'Pool Energy', key = 'pool', default_spin = 100},
+	{type = 'header', 		text = 'General', align = 'center'},
+	{type = 'spinner', 		text = 'Pool Energy', key = 'pool', default_spin = 100},
 	{type = 'ruler'},{type = 'spacer'},
 	
 	-- Survival
-	{type = 'header', text = 'Survival', align = 'center'},
-	{type = 'spinner', text = 'Crimson Vial', key = 'cv', default_spin = 65},
+	{type = 'header', 		text = 'Survival', align = 'center'},
+	{type = 'spinner', 		text = 'Crimson Vial', 					key = 'cv', 	default_spin = 65},
+	{type = 'checkspin', 	text = 'Health Potion', 				key = 'hp', 	default_check = true, default_spin = 25},
+	{type = 'checkspin',	text = 'Healthstone', 					key = 'hs', 	default_check = true, default_spin = 25},
 	{type = 'ruler'},{type = 'spacer'},
 	
 	--Cooldowns
-	{type = 'header', text = 'Cooldowns when toggled on', align = 'center'},
-	{type = 'checkspin', text = 'Use Ardent Defender', key = 'ad', default_check = true, default_spin = 25},
-	{type = 'checkspin', text = 'Use Eye of Tyr', key = 'eye', default_check = true, default_spin = 60},
-	{type = 'checkspin', text = 'Use Guardian of Ancient Kings', key = 'ak', default_check = true, default_spin = 35},
+	{type = 'header', 		text = 'Cooldowns when toggled on', align = 'center'},
+	{type = 'checkbox',		text = 'Vanish',						key = 'van', 	default = true},
+	{type = 'checkbox',		text = 'Vendetta',						key = 'ven', 	default = true},
 	{type = 'ruler'},{type = 'spacer'},} 
 
 local exeOnLoad = function()
@@ -21,7 +22,6 @@ local exeOnLoad = function()
 	print('|cffADFF2F --- Supported Talents')
 	print('|cffADFF2F --- 1,1 / 2,1 / 3,3 / any / any / 6,1 or 6,2 / 7,1')
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
-
 end
 
 local keybinds = {
@@ -40,11 +40,12 @@ local survival = {
 	
 	
 	-- Healthstones
+	{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
 }
 
 local cooldowns = {
-	{ 'Vendetta', 'player.energy <= 50'},
-	{ 'Vanish', 'player.combopoints >= 4'},
+	{ 'Vendetta', 'player.energy <= 50 & UI(ven)'},
+	{ 'Vanish', 'player.combopoints >= 4 & UI(van)'},
 }
 
 local singleTarget = {
