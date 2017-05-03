@@ -1,7 +1,7 @@
 local GUI = {
 	-- General
 	{type = 'header', 		text = 'General', align = 'center'},
-	{type = 'spinner', 		text = 'Pool Energy', key = 'pool', default_spin = 100},
+	{type = 'checkbox',		text = 'Multi-Dot',						key = 'multi', 	default = true},
 	{type = 'ruler'},{type = 'spacer'},
 	
 	-- Survival
@@ -15,6 +15,7 @@ local GUI = {
 	{type = 'header', 		text = 'Cooldowns when toggled on', align = 'center'},
 	{type = 'checkbox',		text = 'Vanish',						key = 'van', 	default = true},
 	{type = 'checkbox',		text = 'Vendetta',						key = 'ven', 	default = true},
+	{type = 'checkbox',		text = 'Potion of the Old War',			key = 'ow', 	default = true},
 	{type = 'ruler'},{type = 'spacer'},} 
 
 local exeOnLoad = function()
@@ -37,7 +38,7 @@ local survival = {
 	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
 		
 	-- Health Pot
-	
+	{ '#Ancient Healing Potion', 'UI(hp_check) & player.health <= UI(hp_spin)'},
 	
 	-- Healthstones
 	{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
@@ -46,6 +47,11 @@ local survival = {
 local cooldowns = {
 	{ 'Vendetta', 'player.energy <= 50 & UI(ven)'},
 	{ 'Vanish', 'player.combopoints >= 4 & UI(van)'},
+	{ '#Potion of the Old War', 'UI(ow) & player.hashero'},
+	{ '#Potion of the Old War', 'UI(ow) & target.ttd <= 25'},
+	{ '#Potion of the Old War', 'UI(ow) & target.debuff(Vendetta) & player.spell(Vanish).cooldown <= 5'},
+	
+	--if=buff.bloodlust.react|target.time_to_die<=25|debuff.vendetta.up&cooldown.vanish.remains<5
 }
 
 local singleTarget = {
@@ -57,11 +63,11 @@ local singleTarget = {
 	{ 'Rupture', 'target.debuff.duration <= 7.2 & player.combopoints >= 4 & target.debuff(Surge of Toxins).duration <= 0.5 & player.spell(Vanish).cooldown & target.ttd >= 6'},
 	
 	-- Multi DoT Rupture
-	{ 'Rupture', 'boss1.enemy & boss1.inmelee & boss1.debuff.duration <= 7.2 & player.combopoints >= 4', 'boss1'},
-	{ 'Rupture', 'boss2.enemy & boss2.inmelee & boss2.debuff.debuff.duration <= 7.2 & player.combopoints >= 4', 'boss2'},
-	{ 'Rupture', 'boss3.enemy & boss3.inmelee & boss3.debuff.debuff.duration <= 7.2 & player.combopoints >= 4', 'boss3'},
-	{ 'Rupture', 'focus.enemy & focus.inmelee & focus.debuff.duration <= 7.2 & player.combopoints >= 4', 'focus'},
-	{ 'Rupture', 'mouseover.enemy & mouseover.inmelee & mouseover.debuff.duration <= 7.2 & player.combopoints >= 4', 'mouseover'},
+	{ 'Rupture', 'boss1.enemy & boss1.inmelee & boss1.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss1'},
+	{ 'Rupture', 'boss2.enemy & boss2.inmelee & boss2.debuff.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss2'},
+	{ 'Rupture', 'boss3.enemy & boss3.inmelee & boss3.debuff.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss3'},
+	{ 'Rupture', 'focus.enemy & focus.inmelee & focus.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'focus'},
+	{ 'Rupture', 'mouseover.enemy & mouseover.inmelee & mouseover.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'mouseover'},
 	
 	{ 'Garrote', 'target.debuff.duration <= 5.4 & player.combopoints <= 4 & target.inmelee'},
 	
@@ -123,7 +129,7 @@ local inCombat = {
 	{ '/startattack', '!isattacking'},
 	{ keybinds},
 	{ survival},
-	{ interrupts, 'target.interruptAt(25)'},
+	{ interrupts, 'target.interruptAt(35)'},
 	{ cooldowns, 'toggle(cooldowns)'},
 	{ 'Rupture', 'player.lastcast(Vanish) & player.combopoints >= 5'},
 	{ 'Garrote', 'player.buff(Stealth) & player.combopoints <= 4 & target.debuff.duration <= 5.4'},
