@@ -15,6 +15,7 @@ rotations\paladin\retribution.lua
 
 rotations\rogue\assassination.lua
 rotations\rogue\outlaw.lua
+rotations\rogue\subtley.lua
 
 rotations\demonhunter\vengeance.lua
 

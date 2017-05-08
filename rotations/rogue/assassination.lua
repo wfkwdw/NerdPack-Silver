@@ -36,31 +36,38 @@ local interrupts = {
 
 local survival = {
 	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
+	{ 'Evasion', 'player.threat >= 100'},
 		
 	-- Health Pot
 	{ '#Ancient Healing Potion', 'UI(hp_check) & player.health <= UI(hp_spin)'},
 	
 	-- Healthstones
 	{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
+	
+	-- Tich
+	{ 'Feint', '!player.buff.duration & player.debuff(Carrion Plague).count >= 2'},
 }
 
 local cooldowns = {
 	{ 'Vendetta', 'player.energy <= 50 & UI(ven)'},
-	{ 'Vanish', 'player.combopoints >= 4 & UI(van)'},
+	{ 'Vanish', '!player.buff(Stealth) & player.combopoints >= 4 & UI(van)'},
+	-- Shouldnt use this if mob isnt a boss
 	{ '#Potion of the Old War', 'UI(ow) & player.hashero'},
 	{ '#Potion of the Old War', 'UI(ow) & target.ttd <= 25'},
-	{ '#Potion of the Old War', 'UI(ow) & target.debuff(Vendetta) & player.spell(Vanish).cooldown <= 5'},
+	{ '#Potion of the Old War', 'UI(ow) & target.debuff(Vendetta) & player.spell(Vanish).cooldown <= 5 & player.debuff(Exhaustion)'},
 	
 	--if=buff.bloodlust.react|target.time_to_die<=25|debuff.vendetta.up&cooldown.vanish.remains<5
 }
 
-local singleTarget = {
+local rotation = {
+	{ survival},
+
 	{ 'Tricks of the Trade', '!focus.buff', 'focus'},
 	{ 'Tricks of the Trade', '!tank.buff', 'tank'},
 	
 	-- Rupture
 	{ 'Rupture', 'player.buff(Vanish) & toggle(cooldowns)'},
-	{ 'Rupture', 'target.debuff.duration <= 7.2 & player.combopoints >= 4 & target.debuff(Surge of Toxins).duration <= 0.5 & player.spell(Vanish).cooldown & target.ttd >= 6'},
+	{ 'Rupture', 'target.debuff.duration <= 7.2 & player.combopoints >= 4 & player.spell(Vanish).cooldown & target.ttd >= 6'},
 	
 	-- Multi DoT Rupture
 	{ 'Rupture', 'boss1.enemy & boss1.inmelee & boss1.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss1'},
@@ -72,43 +79,18 @@ local singleTarget = {
 	{ 'Garrote', 'target.debuff.duration <= 5.4 & player.combopoints <= 4 & target.inmelee'},
 	
 	-- Use Mutilate till 4/5 combopoints for rupture
-	{ 'Mutilate', 'target.debuff(Rupture).duration <= 7.2 & player.combopoints <= 3 & target.inmelee'},
+	{ 'Mutilate', '!target.debuff(Rupture) & player.combopoints <= 3 & target.inmelee'},
 	
 	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & target.debuff(Vendetta) & target.debuff(Surge of Toxins) & target.ttd >= 10'},
 	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & player.spell(Vendetta).cooldown <= 5.8 & target.ttd >= 10'},
 	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & player.spell(Vendetta).cooldown >= 10 & target.ttd >= 10'},
 	
-	--[[
-	actions.kb=kingsbane,if=
-	artifact.sinister_circulation.enabled&!(equipped.duskwalkers_footpads&equipped.convergence_of_fates&artifact.master_assassin.rank>=6)&(time>25|!equipped.mantle_of_the_master_assassin|(debuff.vendetta.up&debuff.surge_of_toxins.up))&(talent.subterfuge.enabled|!stealthed.rogue|(talent.nightstalker.enabled&(!equipped.mantle_of_the_master_assassin|!set_bonus.tier19_4pc)))
-	
-	actions.kb+=/kingsbane,if=
-	
-	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & target.debuff(Vendetta) & target.debuff(Surge of Toxins)'},
-	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & player.spell(Vendetta).cooldown <= 5.8'},
-	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & player.spell(Vendetta).cooldown >= 10'},
-	
-	
-	--!talent.exsanguinate.enabled&buff.envenom.up&((debuff.vendetta.up&debuff.surge_of_toxins.up)
-	|cooldown.vendetta.remains<=5.8|
-	cooldown.vendetta.remains>=10)
-	
-	actions.kb+=/kingsbane,if=talent.exsanguinate.enabled&dot.rupture.exsanguinated
-	]]--
-	
 	{ 'Envenom', 'player.combopoints >= 3 & target.debuff(Surge of Toxins).duration <= 0.5 & target.debuff(Vendetta)'},
 	{ 'Envenom', 'player.combopoints >= 4 & target.debuff(Vendetta)'},
-	{ 'Envenom', 'player.combopoints >= 4 & target.debuff(Surge of Toxins).duration <= 0.5'},
+	{ 'Envenom', 'player.combopoints >= 4'},
 	{ 'Envenom', 'player.combopoints >= 4 & player.energy >= 160'},
-		
-	--[[
-	(debuff.vendetta.up|
-	mantle_duration>=gcd.remains+0.2|
-	debuff.surge_of_toxins.remains<gcd.remains+0.2|
-	energy.deficit<=25+variable.energy_regen_combined)
-	]]--
 	
-	{ 'Fan of Knives', 'toggle(aoe) & player.area(7).enemies >= 3 & player.combopoints <= 4'},
+	{ 'Fan of Knives', 'toggle(aoe) & player.area(10).enemies >= 3 & player.combopoints <= 4'},
 	
 	{ 'Mutilate', 'player.combopoints <= 3 & player.buff(Envenom) & target.inmelee'},
 	{ 'Mutilate', 'player.spell(Vendetta).cooldown <= 5 & player.combopoints <= 3 & target.inmelee'},
@@ -121,19 +103,18 @@ local singleTarget = {
 local preCombat = {
 	{ 'Tricks of the Trade', '!focus.buff & pull_timer <= 4', 'focus'},
 	{ 'Tricks of the Trade', '!tank.buff & pull_timer <= 4', 'tank'},
-	{ '#Potion of the Old War', 'pull_timer <= 1.5'},
+	{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(ow)'},
 }
 
 local inCombat = {
 	{ 'Rupture', 'player.lastcast(Vanish)'},
 	{ '/startattack', '!isattacking'},
 	{ keybinds},
-	{ survival},
 	{ interrupts, 'target.interruptAt(35)'},
 	{ cooldowns, 'toggle(cooldowns)'},
 	{ 'Rupture', 'player.lastcast(Vanish) & player.combopoints >= 5'},
 	{ 'Garrote', 'player.buff(Stealth) & player.combopoints <= 4 & target.debuff.duration <= 5.4'},
-	{ singleTarget, '!player.buff(Stealth)'}
+	{ rotation, '!player.buff(Stealth)'}
 }
 
 local outCombat = {
