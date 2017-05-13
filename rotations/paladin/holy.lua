@@ -217,6 +217,7 @@ local healing = {
 	{ 'Holy Shock', 'tank.health <= UI(T_HS)', 'tank'},
 	{ 'Holy Shock', 'tank2.health <= UI(T_HS)', 'tank2'},
 	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
+	{ 'Holy Shock', 'mouseover.health <= UI(L_HS) & !mouseover.enemy', 'mouseover'},
 	
 	{ 'Flash of Light', 'lbuff(200654).health <= UI(L_FoL)', 'lbuff(200654)'},
 	
@@ -224,12 +225,14 @@ local healing = {
 	{ 'Flash of Light', 'tank2.health <= UI(T_FoL)', 'tank2'},
 	{ '!Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.casting(Holy Light) & player.casting.percent <= 50', 'lowestpredicted'},
 	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL)', 'lowestpredicted'},
+	{ 'Flash of Light', 'mouseover.health <= UI(L_FoL) & !mouseover.enemy', 'mouseover'},
 	
 	{ 'Judgment', 'target.enemy'}, -- Keep up dmg reduction buff
 	
 	{ 'Holy Light', 'tank.health <= UI(T_HL)', 'tank'},
 	{ 'Holy Light', 'tank2.health <= UI(T_HL)', 'tank2'},
 	{ 'Holy Light', 'lowestpredicted.health <= UI(L_HL)', 'lowestpredicted'},
+	{ 'Holy Light', 'mouseover.health <= UI(L_FoL) & !mouseover.enemy', 'mouseover'},
 }
 
 local emergency = {
