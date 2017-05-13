@@ -2,6 +2,9 @@ local GUI = {
 	-- General
 	{type = 'header', 		text = 'General', align = 'center'},
 	{type = 'checkbox',		text = 'Multi-Dot',						key = 'multi', 	default = true},
+	{type = 'checkbox',		text = 'Sinister Circulation',			key = 'sin', 	default = true},
+	{type = 'checkbox',		text = 'T19 4 Piece',					key = 't19', 	default = true},
+	{type = 'checkbox',		text = 'Mantle of the Master Assassin',	key = 'mantle', 	default = true},
 	{type = 'ruler'},{type = 'spacer'},
 	
 	-- Survival
@@ -35,6 +38,8 @@ local interrupts = {
 }
 
 local survival = {
+	{ 'Feint', 'boss1.buff(Blood of the Father) & !player.buff'},
+
 	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
 	{ 'Evasion', 'player.threat >= 100'},
 		
@@ -49,6 +54,7 @@ local survival = {
 }
 
 local cooldowns = {
+	
 	{ 'Vendetta', 'player.energy <= 50 & UI(ven)'},
 	{ 'Vanish', '!player.buff(Stealth) & player.combopoints >= 4 & UI(van)'},
 	-- Shouldnt use this if mob isnt a boss
@@ -59,10 +65,10 @@ local cooldowns = {
 	--if=buff.bloodlust.react|target.time_to_die<=25|debuff.vendetta.up&cooldown.vanish.remains<5
 }
 
-local rotation = {
-	{ survival},
 
-	{ 'Tricks of the Trade', '!focus.buff', 'focus'},
+local rotation = {
+	{ survival},	
+	{ 'Tricks of the Trade', '!focus.buff & !focus.enemy', 'focus'},
 	{ 'Tricks of the Trade', '!tank.buff', 'tank'},
 	
 	-- Rupture
@@ -73,7 +79,7 @@ local rotation = {
 	{ 'Rupture', 'boss1.enemy & boss1.inmelee & boss1.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss1'},
 	{ 'Rupture', 'boss2.enemy & boss2.inmelee & boss2.debuff.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss2'},
 	{ 'Rupture', 'boss3.enemy & boss3.inmelee & boss3.debuff.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss3'},
-	{ 'Rupture', 'focus.enemy & focus.inmelee & focus.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'focus'},
+	{ 'Rupture', 'focus.enemy & focus.inmelee & focus.debuff.duration <= 7.2 & player.combopoints >= 4 & focus.enemy & UI(multi)', 'focus'},
 	{ 'Rupture', 'mouseover.enemy & mouseover.inmelee & mouseover.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'mouseover'},
 	
 	{ 'Garrote', 'target.debuff.duration <= 5.4 & player.combopoints <= 4 & target.inmelee'},
@@ -87,7 +93,7 @@ local rotation = {
 	
 	{ 'Envenom', 'player.combopoints >= 3 & target.debuff(Surge of Toxins).duration <= 0.5 & target.debuff(Vendetta)'},
 	{ 'Envenom', 'player.combopoints >= 4 & target.debuff(Vendetta)'},
-	{ 'Envenom', 'player.combopoints >= 4'},
+	{ 'Envenom', 'player.combopoints >= 4 & target.debuff(Surge of Toxins).duration <= 0.5'},
 	{ 'Envenom', 'player.combopoints >= 4 & player.energy >= 160'},
 	
 	{ 'Fan of Knives', 'toggle(aoe) & player.area(10).enemies >= 3 & player.combopoints <= 4'},

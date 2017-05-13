@@ -123,7 +123,7 @@ local Keybinds = {
 }
 
 local inCombat = {
-	--{'/startattack', '!isattacking'},
+	{'/startattack', '!isattacking'},
 	{Keybinds},	
 	{'883', '!pet.exists & toggle(PetSummon)'},	
 --	{BRez, '!focus.alive'},
