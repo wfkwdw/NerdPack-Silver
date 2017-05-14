@@ -51,10 +51,15 @@ local survival = {
 local cooldowns = {
 	--# Cooldowns
 	--actions.cds=potion,name=old_war,if=buff.bloodlust.react|target.time_to_die<=25|buff.shadow_blades.up
+	{ '#Potion of the Old War', 'UI(ow) & player.hashero'},
+	{ '#Potion of the Old War', 'UI(ow) & target.ttd <= 25'},
+	{ '#Potion of the Old War', 'UI(ow) & player.buff(Shadow Blades) & player.sated'}, -- Dont want to use before hero
 	--actions.cds+=/blood_fury,if=stealthed.rogue
+	{ 'Blood Fury', 'player.stealthed'},
 	--actions.cds+=/berserking,if=stealthed.rogue
+	{ 'Berserking', 'player.stealthed'},
 	--actions.cds+=/arcane_torrent,if=stealthed.rogue&energy.deficit>70
-	
+	{ 'Arcane Torrent', 'player.stealthed & player.energy.deficit > 70'},
 	--actions.cds+=/shadow_blades,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*0.5|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
 	{ 'Shadow Blades', 'player.combopoints.deficit >= 2 & player.stealthed & toggle(Cooldowns)'},
 	--actions.cds+=/goremaws_bite,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*(0.4+equipped.denial_of_the_halfgiants*0.2)|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
@@ -136,6 +141,7 @@ local stealthed = {
 }
 
 local simCraft = {
+	{ survival},
 	--# Executed every time the actor is available.
 	--actions=run_action_list,name=sprinted,if=buff.faster_than_light_trigger.up
 	{ sprinted, 'player.buff(Sprint).duration >= 5'},
@@ -158,33 +164,6 @@ local simCraft = {
 	{ build, 'player.energy.deficit <= variable.stealth_threshold || energy.time_to_max <= gcd'},
 }
 
-
-local singleTarget = {
-	{ survival},
-	{ '/startattack', '!isattacking'},
-	--Maintain the Symbols of Death Icon Symbols of Death buff.
-	{ 'Symbols of Death', 'player.buff.duration <= 10.5'},
-	--Maintain Nightblade Icon Nightblade.
-	{ 'Nightblade', 'target.debuff.duration <= 4.5 & player.combopoints >= 4'},
-	--Activate Shadow Blades Icon Shadow Blades if available.
-	{ 'Shadow Blades', '!player.buff(Shadow Dance) & player.energy >= 100'}, 
-	--Enter Shadow Dance Icon Shadow Dance if you have 3 charges, or there is less than 30 seconds remaining before you get your third charge.
-	{ 'Shadow Dance', 'player.spell.charges = 3 & & talent(6,1) & player.combopoints = 1 & player.deficit <= 25  & !player.buff(Subterfuge)'},
-	{ 'Shadow Dance', 'player.spell.charges = 3 & & !talent(6,1) & player.combopoints = 3 & player.deficit <= 25  & !player.buff(Subterfuge)'},
-	{ 'Shadow Dance', 'player.spell.charges = 2 & player.spell.cooldown <= 30 & !player.buff(Subterfuge)'},
-	--Shadow Dance Icon Shadow Dance should be activated as close to Energy cap as possible (70 with Master of Shadows Icon Master of Shadows).
-	--If talented into Premeditation Icon Premeditation you should aim to enter Shadow Dance Icon Shadow Dance with 1 Combo Point (3 Combo Points without Premeditation Icon Premeditation, and 6-7 Combo Points with Anticipation Icon Anticipation).
-	--Use Shadowstrike Icon Shadowstrike as long you are Stealthed and have less than 5 combo points (7 with Anticipation Icon Anticipation).
-	{ 'Shadowstrike', 'player.combopoints <= 5 & player.stealthed'},
-	--Activate Vanish Icon Vanish when available (see Shadow Blades Icon Shadow Blades rules directly above).
-	--Cast Goremaw's Bite Icon Goremaw's Bite on cooldown.
-	{ 'Goremaw\'s Bite', 'player.combopoints.deficit >= 3 & player.time >= 20'},
-	--Use Eviscerate Icon Eviscerate to spend Combo Points.
-	{ 'Eviscerate', 'player.combopoints.deficit <= 1'},
-	--Cast Backstab Icon Backstab to generate Combo Points.
-	{ 'Backstab', 'player.combopoints.deficit >= 1 & player.deficit <= 10 & !player.stealthed & player.spell(Shadow Blades).cooldown'},
-}
-
 local preCombat = {
 	{ 'Tricks of the Trade', '!focus.buff & pull_timer <= 4', 'focus'},
 	{ 'Tricks of the Trade', '!tank.buff & pull_timer <= 4', 'tank'},
@@ -195,7 +174,6 @@ local preCombat = {
 local inCombat = {
 	{ keybinds},
 	{ interrupts, 'target.interruptAt(35)'},
-	{ cooldowns, 'toggle(cooldowns)'},
 	{ simCraft}
 }
 

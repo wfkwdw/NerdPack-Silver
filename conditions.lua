@@ -53,30 +53,6 @@ NeP.DSL:Register('rtb', function()
 	return buffCount
 end)
 
-NeP.DSL:Register('stealthed', function()
-	local stealth = UnitBuff('player', 'Stealth')
-	local vanish = UnitBuff('player', 'Vanish')
-	local subterfuge = UnitBuff('player', 'Subterfuge')
-	local shadowDance = UnitBuff('player', 'Shadow Dance')
-	
-	if stealth then
-		--print('Stealth')
-		return true
-	end
-	if vanish then
-		--print('Vanish')
-		return true
-	end
-	if subterfuge then
-		--print('Subterfuge')
-		return true
-	end
-	if shadowDance then
-		--print('Shadow Dance')
-		return true
-	end
-end)
-
 NeP.DSL:Register('sb.up', function()
     local shadowBlades = UnitBuff('player', 'Shadow Blades')
 	if shadowBlades then
@@ -163,4 +139,20 @@ NeP.DSL:Register('variable.stealth_threshold', function()
 	local x = ((15 + NeP.DSL:Get('talent.enabled')(nil, '3,3')) * (35 + NeP.DSL:Get('talent.enabled')(nil, '7,1')) * (25 + NeP.DSL:Get('variable.ssw_er')()))
 	--print(x)
     return x
+end)
+
+NeP.DSL:Register('stealthed', function()
+    if NeP.DSL:Get('buff')('player', 'Shadow Dance') or NeP.DSL:Get('buff')('player', 'Stealth') or NeP.DSL:Get('buff')('player', 'Subterfuge') or NeP.DSL:Get('buff')('player', 'Shadowmeld') or NeP.DSL:Get('buff')('player', 'Prowl') then
+        return true
+    else
+        return false
+    end
+end)
+
+NeP.DSL:Register('sated', function()
+    if NeP.DSL:Get('debuff')('player', 'Sated') or NeP.DSL:Get('debuff')('player', 'Exhaustion') or NeP.DSL:Get('debuff')('player', 'Fatigued') or NeP.DSL:Get('debuff')('player', 'Insanity') or NeP.DSL:Get('debuff')('player', 'Fatigued') or NeP.DSL:Get('debuff')('player', 'Temporal Displacement') then
+        return true
+    else
+        return false
+    end
 end)

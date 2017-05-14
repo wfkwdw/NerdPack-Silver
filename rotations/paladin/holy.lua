@@ -231,8 +231,8 @@ local healing = {
 	
 	{ 'Holy Light', 'tank.health <= UI(T_HL)', 'tank'},
 	{ 'Holy Light', 'tank2.health <= UI(T_HL)', 'tank2'},
-	{ 'Holy Light', 'lowestpredicted.health <= UI(L_HL)', 'lowestpredicted'},
 	{ 'Holy Light', 'mouseover.health <= UI(L_FoL) & !mouseover.enemy', 'mouseover'},
+	{ 'Holy Light', 'lowestpredicted.health <= UI(L_HL)', 'lowestpredicted'},
 }
 
 local emergency = {
