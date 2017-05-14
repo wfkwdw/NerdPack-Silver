@@ -60,19 +60,19 @@ NeP.DSL:Register('stealthed', function()
 	local shadowDance = UnitBuff('player', 'Shadow Dance')
 	
 	if stealth then
-		print('Stealth')
+		--print('Stealth')
 		return true
 	end
 	if vanish then
-		print('Vanish')
+		--print('Vanish')
 		return true
 	end
 	if subterfuge then
-		print('Subterfuge')
+		--print('Subterfuge')
 		return true
 	end
 	if shadowDance then
-		print('Shadow Dance')
+		--print('Shadow Dance')
 		return true
 	end
 end)
@@ -121,4 +121,46 @@ NeP.DSL:Register('dot.ticking', function(target, spell)
     else
         return false
     end
+end)
+
+NeP.DSL:Register('xequipped', function(item)
+    if IsEquippedItem(item) then
+        return 1
+    else
+        return 0
+    end
+end)
+
+NeP.DSL:Register('talent.enabled', function(_, x,y)
+    if NeP.DSL:Get('talent')(_, x,y) then
+        return 1
+    else
+        return 0
+    end
+end)
+
+NeP.DSL:Register('variable.ssw_er', function()
+    --actions=variable,name=ssw_er,value=equipped.shadow_satyrs_walk*(10+floor(target.distance*0.5))
+    local range_check
+    if NeP.DSL:Get('range')('target') then
+        range_check = NeP.DSL:Get('range')('target')
+    else
+        range_check = 0
+    end
+    local x = (NeP.DSL:Get('xequipped')('137032') * (10 + (range_check * 0.5)))
+	--print(variable.ssw_er)
+    return x
+end)
+
+NeP.DSL:Register('variable.ed_threshold', function()
+    --actions+=/variable,name=ed_threshold,value=energy.deficit<=(20+talent.vigor.enabled*35+talent.master_of_shadows.enabled*25+variable.ssw_er)
+    local x = (NeP.DSL:Get('deficit')() <= ((20 + NeP.DSL:Get('talent.enabled')(nil, '3,3')) * (35 + NeP.DSL:Get('talent.enabled')(nil, '7,1')) * (25 + NeP.DSL:Get('variable.ssw_er')())))
+    return x
+end)
+
+NeP.DSL:Register('variable.stealth_threshold', function()
+	--actions.precombat+=/variable,name=stealth_threshold,value=(15+talent.vigor.enabled*35+talent.master_of_shadows.enabled*25+variable.ssw_refund)
+	local x = ((15 + NeP.DSL:Get('talent.enabled')(nil, '3,3')) * (35 + NeP.DSL:Get('talent.enabled')(nil, '7,1')) * (25 + NeP.DSL:Get('variable.ssw_er')()))
+	--print(x)
+    return x
 end)

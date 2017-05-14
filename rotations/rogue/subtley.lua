@@ -56,7 +56,7 @@ local cooldowns = {
 	--actions.cds+=/arcane_torrent,if=stealthed.rogue&energy.deficit>70
 	
 	--actions.cds+=/shadow_blades,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*0.5|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
-	{ 'Shadow Blades', 'player.combopoints.deficit >= 2 & player.stealthed'},
+	{ 'Shadow Blades', 'player.combopoints.deficit >= 2 & player.stealthed & toggle(Cooldowns)'},
 	--actions.cds+=/goremaws_bite,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*(0.4+equipped.denial_of_the_halfgiants*0.2)|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
 	{ 'Goremaw\'s Bite', 'player.combopoints.deficit >= 2 & player.stealthed'},
 	--actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=target.time_to_die<combo_points.deficit|(raid_event.adds.in>40&combo_points.deficit>=cp_max_spend)
@@ -98,6 +98,7 @@ local sprinted = {
 local stealthCooldowns = {
 	--# Stealth Cooldowns
 	--actions.stealth_cds=vanish,if=mantle_duration=0&cooldown.shadow_dance.charges_fractional<variable.shd_fractionnal+(equipped.mantle_of_the_master_assassin&time<30)*0.3
+	--{ 'Vanish', 
 	--actions.stealth_cds+=/shadow_dance,if=charges_fractional>=variable.shd_fractionnal
 	{ 'Shadow Dance', 'player.spell.charges >= 2.45'},
 	--actions.stealth_cds+=/pool_resource,for_next=1,extra_amount=40
@@ -147,13 +148,14 @@ local simCraft = {
 	--actions+=/nightblade,if=target.time_to_die>8&remains<gcd.max&combo_points>=4
 	{ 'Nightblade', 'target.deathin > 8 & target.debuff.duration < gcd & player.combopoints >= 4'},
 	--actions+=/sprint,if=!equipped.draught_of_souls&mantle_duration=0&energy.time_to_max>=1.5&cooldown.shadow_dance.charges_fractional<variable.shd_fractionnal&!cooldown.vanish.up&target.time_to_die>=8&(dot.nightblade.remains>=14|target.time_to_die<=45)
+	{ 'Sprint', 'energy.time_to_max >= 1.5 & spell(Shadow Dance).charges < 2.45 & !spell(Vanish).cooldown & target.deathin >= 8 & target.debuff(Nightblade).duration >= 14'},
 	--actions+=/sprint,if=equipped.draught_of_souls&trinket.cooldown.up&mantle_duration=0
 	--actions+=/call_action_list,name=stealth_als,if=(combo_points.deficit>=2+talent.premeditation.enabled|cooldown.shadow_dance.charges_fractional>=2.9)
 	{ stealth_als, 'player.combopoints.deficit >= 2 & !talent(6,1) || player.combopoints.deficit >= 3 & talent(6,1) || player.spell(Shadow Dance).charges >= 2.9'},
 	--actions+=/call_action_list,name=finish,if=combo_points>=5|(combo_points>=4&combo_points.deficit<=2&spell_targets.shuriken_storm>=3&spell_targets.shuriken_storm<=4)
 	{ finish, 'player.combopoints >= 5 || player.combopoints >= 4 & player.combopoints deficit <= 2 & player.area(10).enemies >= 3 & player.area(10).enemies <= 4'},
 	--actions+=/call_action_list,name=build,if=energy.deficit<=variable.stealth_threshold
-	{ build, 'player.energy.time_to_max <= gcd'},
+	{ build, 'player.energy.deficit <= variable.stealth_threshold || energy.time_to_max <= gcd'},
 }
 
 
