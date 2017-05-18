@@ -1,6 +1,48 @@
 local _, Silver = ...
 
 ---------------------------------------
+--------------- General ---------------
+---------------------------------------
+NeP.DSL:Register('sated', function()
+    if NeP.DSL:Get('debuff')('player', 'Sated') or NeP.DSL:Get('debuff')('player', 'Exhaustion') or NeP.DSL:Get('debuff')('player', 'Fatigued') or NeP.DSL:Get('debuff')('player', 'Insanity') or NeP.DSL:Get('debuff')('player', 'Fatigued') or NeP.DSL:Get('debuff')('player', 'Temporal Displacement') then
+        return true
+    else
+        return false
+    end
+end)
+
+NeP.DSL:Register('xequipped', function(item)
+    if IsEquippedItem(item) then
+        return 1
+    else
+        return 0
+    end
+end)
+
+NeP.DSL:Register('talent.enabled', function(_, x,y)
+    if NeP.DSL:Get('talent')(_, x,y) then
+        return 1
+    else
+        return 0
+    end
+end)
+
+NeP.DSL:Register('deficit', function()
+    local max = UnitPowerMax('player')
+    local curr = UnitPower('player')
+	--print(max - curr)
+    return (max - curr)
+end)
+
+NeP.DSL:Register('gcd.remains', function()
+    return NeP.DSL:Get('spell.cooldown')('player', '61304')
+end)
+
+NeP.DSL:Register('gcd.max', function()
+    return NeP.DSL:Get('gcd')()
+end)
+
+---------------------------------------
 ---------------- Rogue ----------------
 ---------------------------------------
 
@@ -71,10 +113,6 @@ NeP.DSL:Register('poisoned_bleeds', function()
 	return int
 end)
 
-NeP.DSL:Register('gcd.max', function()
-    return NeP.DSL:Get('gcd')()
-end)
-
 NeP.DSL:Register('sb.up', function()
     local shadowBlades = UnitBuff('player', 'Shadow Blades')
 	if shadowBlades then
@@ -97,8 +135,6 @@ NeP.DSL:Register('vw.up', function()
     return 0
 end)
 
-NeP.DSL:Get('talent.enabled')(nil, '3,3')
-
 NeP.DSL:Register('energy.regen', function()
     local eregen = select(2, GetPowerRegen('player'))
     return eregen
@@ -110,43 +146,8 @@ NeP.DSL:Register('energy.time_to_max', function()
     return deficit / eregen
 end)
 
-NeP.DSL:Register('deficit', function()
-    local max = UnitPowerMax('player')
-    local curr = UnitPower('player')
-	--print(max - curr)
-    return (max - curr)
-end)
-
-NeP.DSL:Register('gcd.remains', function()
-    return NeP.DSL:Get('spell.cooldown')('player', '61304')
-end)
-
 NeP.DSL:Register('combopoints.deficit', function(target)
     return (UnitPowerMax('player', SPELL_POWER_COMBO_POINTS)) - (UnitPower('player', SPELL_POWER_COMBO_POINTS))
-end)
-
-NeP.DSL:Register('dot.ticking', function(target, spell)
-    if NeP.DSL:Get('debuff')(target, spell) then
-        return true
-    else
-        return false
-    end
-end)
-
-NeP.DSL:Register('xequipped', function(item)
-    if IsEquippedItem(item) then
-        return 1
-    else
-        return 0
-    end
-end)
-
-NeP.DSL:Register('talent.enabled', function(_, x,y)
-    if NeP.DSL:Get('talent')(_, x,y) then
-        return 1
-    else
-        return 0
-    end
 end)
 
 NeP.DSL:Register('variable.ssw_er', function()
@@ -214,14 +215,6 @@ end)
 
 NeP.DSL:Register('stealthed', function()
     if NeP.DSL:Get('buff')('player', 'Shadow Dance') or NeP.DSL:Get('buff')('player', 'Stealth') or NeP.DSL:Get('buff')('player', 'Subterfuge') or NeP.DSL:Get('buff')('player', 'Shadowmeld') or NeP.DSL:Get('buff')('player', 'Prowl') then
-        return true
-    else
-        return false
-    end
-end)
-
-NeP.DSL:Register('sated', function()
-    if NeP.DSL:Get('debuff')('player', 'Sated') or NeP.DSL:Get('debuff')('player', 'Exhaustion') or NeP.DSL:Get('debuff')('player', 'Fatigued') or NeP.DSL:Get('debuff')('player', 'Insanity') or NeP.DSL:Get('debuff')('player', 'Fatigued') or NeP.DSL:Get('debuff')('player', 'Temporal Displacement') then
         return true
     else
         return false

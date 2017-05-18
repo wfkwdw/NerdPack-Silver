@@ -61,16 +61,18 @@ local cooldowns = {
 	--actions.cds+=/use_item,name=draught_of_souls,if=energy.deficit>=35+variable.energy_regen_combined*2&(!equipped.mantle_of_the_master_assassin|cooldown.vanish.remains>8)&(!talent.agonizing_poison.enabled|debuff.agonizing_poison.stack>=5&debuff.surge_of_toxins.remains>=3)
 	--actions.cds+=/use_item,name=draught_of_souls,if=mantle_duration>0&mantle_duration<3.5&dot.kingsbane.ticking
 	--actions.cds+=/blood_fury,if=debuff.vendetta.up
+	{ 'Blood Fury', 'target.debuff(Vendetta)'},
 	--actions.cds+=/berserking,if=debuff.vendetta.up
+	{ 'Berserking', 'target.debuff(Vendetta)'},
 	--actions.cds+=/arcane_torrent,if=dot.kingsbane.ticking&!buff.envenom.up&energy.deficit>=15+variable.energy_regen_combined*gcd.remains*1.1
 	--actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=target.time_to_die<combo_points.deficit*1.5|(raid_event.adds.in>40&combo_points.deficit>=cp_max_spend)
 	--actions.cds+=/vendetta,if=!artifact.urge_to_kill.enabled|energy.deficit>=60+variable.energy_regen_combined
 	{ 'Vendetta', 'player.deficit >= 60 + variable.energy_regen_combined & UI(ven)'},
 	--# Nightstalker w/o Exsanguinate: Vanish Envenom if Mantle & T19_4PC, else Vanish Rupture
 	--actions.cds+=/vanish,if=talent.nightstalker.enabled&combo_points>=cp_max_spend&!talent.exsanguinate.enabled&((equipped.mantle_of_the_master_assassin&set_bonus.tier19_4pc&mantle_duration=0)|((!equipped.mantle_of_the_master_assassin|!set_bonus.tier19_4pc)&(dot.rupture.refreshable|debuff.vendetta.up)))
-	{ 'Vanish', 'talent(2,1) & player.combopoints.deficit < 1 & !talent(6,3) & {{ player.xequipped(144236) & player.rogue.t19 >= 4 & !player.buff(Master Assassin\'s Initiative)} || {{ !player.xequipped(144236) || player.rogue.t19 < 4 } & { target.debuff(Rupture).duration <= 7.2 || target.debuff(Vendetta)}}}'},
+	{ 'Vanish', 'talent(2,1) & player.combopoints.deficit < 1 & !talent(6,3) & UI(van) & {{ player.xequipped(144236) & player.rogue.t19 >= 4 & !player.buff(Master Assassin\'s Initiative)} || {{ !player.xequipped(144236) || player.rogue.t19 < 4 } & { target.debuff(Rupture).duration <= 7.2 || target.debuff(Vendetta)}}}'},
 	--actions.cds+=/vanish,if=talent.nightstalker.enabled&combo_points>=cp_max_spend&talent.exsanguinate.enabled&cooldown.exsanguinate.remains<1&(dot.rupture.ticking|time>10)
-	{ 'Vanish', 'talent(2,1) & player.combopoints.deficit < 1 & talent(6,1) & player.spell(Exsanguinate).cooldown < 1 & { target.debuff(Rupture) || time > 10}'},
+	{ 'Vanish', 'talent(2,1) & player.combopoints.deficit < 1 & talent(6,1) & player.spell(Exsanguinate).cooldown < 1 & UI(van) & { target.debuff(Rupture) || time > 10}'},
 	--actions.cds+=/vanish,if=talent.subterfuge.enabled&equipped.mantle_of_the_master_assassin&(debuff.vendetta.up|target.time_to_die<10)&mantle_duration=0
 	
 	--actions.cds+=/vanish,if=talent.subterfuge.enabled&!equipped.mantle_of_the_master_assassin&!stealthed.rogue&dot.garrote.refreshable&((spell_targets.fan_of_knives<=3&combo_points.deficit>=1+spell_targets.fan_of_knives)|(spell_targets.fan_of_knives>=4&combo_points.deficit>=4))
@@ -86,7 +88,9 @@ local build = {
 	--actions.build=hemorrhage,if=refreshable
 	--actions.build+=/hemorrhage,cycle_targets=1,if=refreshable&dot.rupture.ticking&spell_targets.fan_of_knives<2+talent.agonizing_poison.enabled+equipped.insignia_of_ravenholdt
 	--actions.build+=/fan_of_knives,if=spell_targets>=2+talent.agonizing_poison.enabled+equipped.insignia_of_ravenholdt|buff.the_dreadlords_deceit.stack>=29
+	{ 'Fan of Knives', 'player.area(10).enemies >= 2 + talent.enabled(7,1) + xequipped(137049) & toggle(aoe)'},
 	--actions.build+=/mutilate,cycle_targets=1,if=(!talent.agonizing_poison.enabled&dot.deadly_poison_dot.refreshable)|(talent.agonizing_poison.enabled&debuff.agonizing_poison.remains<debuff.agonizing_poison.duration*0.3)
+	{ 'Mutilate', '{ !talent(7,1) & target.debuff(Deadly Poison).duration <= 4.5} || { talent(7,1) & debuff(Agonizing Poison).duration < 3.6}'},
 	--actions.build+=/mutilate
 	{ 'Mutilate'},
 	--actions.build+=/poisoned_knife,cycle_targets=1,if=talent.agonizing_poison.enabled&debuff.agonizing_poison.remains<debuff.agonizing_poison.duration*0.3&debuff.agonizing_poison.stack>=5
@@ -138,7 +142,7 @@ local simCraft = {
 	--actions=variable,name=energy_regen_combined,value=energy.regen+poisoned_bleeds*(7+talent.venom_rush.enabled*3)%2 
 	--actions+=/variable,name=energy_time_to_max_combined,value=energy.deficit%variable.energy_regen_combined
 	--actions+=/call_action_list,name=cds
-	{ cooldowns},
+	{ cooldowns, 'target.boss & toggle(cooldowns)'},
 	--actions+=/call_action_list,name=maintain
 	{ maintain},
 	--# The 'active_dot.rupture>=spell_targets.rupture' means that we don't want to envenom as long as we can multi-rupture (i.e. units that don't have rupture yet).
@@ -148,62 +152,20 @@ local simCraft = {
 	{ build, 'player.combopoints.deficit > 1 || player.deficit <= 25 + variable.energy_regen_combined'},
 }
 
-local rotation = {
-	{ survival},	
-	{ 'Tricks of the Trade', '!focus.buff & !focus.enemy', 'focus'},
-	{ 'Tricks of the Trade', '!tank.buff', 'tank'},
-	
-	-- Rupture
-	{ 'Rupture', 'player.buff(Vanish) & toggle(cooldowns)'},
-	{ 'Rupture', 'target.debuff.duration <= 7.2 & player.combopoints >= 4 & player.spell(Vanish).cooldown & target.ttd >= 6'},
-	
-	-- Multi DoT Rupture
-	{ 'Rupture', 'boss1.enemy & boss1.inmelee & boss1.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss1'},
-	{ 'Rupture', 'boss2.enemy & boss2.inmelee & boss2.debuff..duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss2'},
-	{ 'Rupture', 'boss3.enemy & boss3.inmelee & boss3.debuff..duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'boss3'},
-	{ 'Rupture', 'focus.enemy & focus.inmelee & focus.debuff.duration <= 7.2 & player.combopoints >= 4 & focus.enemy & UI(multi)', 'focus'},
-	{ 'Rupture', 'mouseover.enemy & mouseover.inmelee & mouseover.debuff.duration <= 7.2 & player.combopoints >= 4 & UI(multi)', 'mouseover'},
-	
-	{ 'Garrote', 'target.debuff.duration <= 5.4 & player.combopoints <= 4 & target.inmelee'},
-	
-	-- Use Mutilate till 4/5 combopoints for rupture
-	{ 'Mutilate', '!target.debuff(Rupture) & player.combopoints <= 3 & target.inmelee'},
-	
-	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & target.debuff(Vendetta) & target.debuff(Surge of Toxins) & target.ttd >= 10'},
-	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & player.spell(Vendetta).cooldown <= 5.8 & target.ttd >= 10'},
-	{ 'Kingsbane', '!talent(6,3) & player.buff(Envenom) & player.spell(Vendetta).cooldown >= 10 & target.ttd >= 10'},
-	
-	{ 'Envenom', 'player.combopoints >= 3 & target.debuff(Surge of Toxins).duration <= 0.5 & target.debuff(Vendetta)'},
-	{ 'Envenom', 'player.combopoints >= 4 & target.debuff(Vendetta)'},
-	{ 'Envenom', 'player.combopoints >= 4 & target.debuff(Surge of Toxins).duration <= 0.5'},
-	{ 'Envenom', 'player.combopoints >= 4 & player.energy >= 160'},
-	
-	{ 'Fan of Knives', 'toggle(aoe) & player.area(10).enemies >= 3 & player.combopoints <= 4'},
-	
-	{ 'Mutilate', 'player.combopoints <= 3 & player.buff(Envenom) & target.inmelee'},
-	{ 'Mutilate', 'player.spell(Vendetta).cooldown <= 5 & player.combopoints <= 3 & target.inmelee'},
-	{ 'Mutilate', 'player.combopoints <= 3 & target.inmelee'},
-	
-	{ 'Poisoned Knife', 'player.energy >= 160 & player.combopoints <= 4 & target.range >= 10'},
-	{ 'Poisoned Knife', 'target.range >= 10 & target.debuff(Agonizing Poison).duration <= 2'},
-}
-
 local preCombat = {
 	{ 'Tricks of the Trade', '!focus.buff & pull_timer <= 4', 'focus'},
 	{ 'Tricks of the Trade', '!tank.buff & pull_timer <= 4', 'tank'},
 	{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(ow)'},
+	{ 'Garrote', 'pull_timer < 0.1'},
 }
 
 local inCombat = {
-	--{ 'Rupture', 'player.lastcast(Vanish)'},
-	{ '/startattack', '!isattacking'},
+	{ '/startattack', '!isattacking & target.enemy'},
 	{ keybinds},
 	{ interrupts, 'target.interruptAt(35)'},
-	--{ cooldowns, 'toggle(cooldowns)'},
-	--{ 'Rupture', 'player.lastcast(Vanish) & player.combopoints >= 5'},
-	--{ 'Garrote', 'player.buff(Stealth) & player.combopoints <= 4 & target.debuff.duration <= 5.4'},
-	{ simCraft},
-	--{ rotation, '!player.buff(Stealth)'}
+	{ survival},
+	{ '/startattack', '!isattacking & target.enemy'},
+	{ simCraft, 'target.enemy'},
 }
 
 local outCombat = {
@@ -212,11 +174,8 @@ local outCombat = {
 	{ 'Agonizing Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(6,1)'},
 	{ 'Leeching Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(4,1)'},
 	{ 'Crippling Poison', 'player.buff.duration <= 600 & !player.lastcast & !talent(4,1)'},
-	
-	{ 'Rupture', 'player.buff(Vanish) & toggle(cooldowns)'},
-	
+		
 	{ 'Stealth', '!player.buff & !player.buff(Vanish)'},
-	{ 'Garrote', 'player.buff(Stealth) & player.combopoints <= 4 & target.debuff.duration <= 5.4 & target.inmelee & target.enemy'},
 	{ keybinds},
 	{ preCombat}
 }
