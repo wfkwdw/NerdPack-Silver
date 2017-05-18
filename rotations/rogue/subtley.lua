@@ -14,7 +14,7 @@ local GUI = {
 	--Cooldowns
 	{type = 'header', 		text = 'Cooldowns when toggled on', align = 'center'},
 	{type = 'checkbox',		text = 'Vanish',						key = 'van', 	default = true},
-	{type = 'checkbox',		text = 'Vendetta',						key = 'ven', 	default = true},
+	{type = 'checkbox',		text = 'Shadow Blades',					key = 'sb', 	default = true},
 	{type = 'checkbox',		text = 'Potion of the Old War',			key = 'ow', 	default = true},
 	{type = 'ruler'},{type = 'spacer'},} 
 
@@ -26,7 +26,7 @@ local exeOnLoad = function()
 end
 
 local keybinds = {
-
+	{ '%pause', 'keybind(alt)'}
 }
 
 local interrupts = {
@@ -45,21 +45,21 @@ local survival = {
 	{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
 	
 	-- Tich
-	{ 'Feint', '!player.buff.duration & player.debuff(Carrion Plague).count >= 2'},
+	{ 'Feint', '!player.buff & player.debuff(Carrion Plague)'},
 }
 
 local cooldowns = {
 	--# Cooldowns
 	--actions.cds=potion,name=old_war,if=buff.bloodlust.react|target.time_to_die<=25|buff.shadow_blades.up
-	{ '#Potion of the Old War', 'UI(ow) & player.hashero'},
-	{ '#Potion of the Old War', 'UI(ow) & target.ttd <= 25'},
-	{ '#Potion of the Old War', 'UI(ow) & player.buff(Shadow Blades) & player.sated'}, -- Dont want to use before hero
+	{ '#Potion of the Old War', 'UI(ow) & player.hashero & toggle(Cooldowns)'},
+	{ '#Potion of the Old War', 'UI(ow) & target.ttd <= 25 & toggle(Cooldowns)'},
+	{ '#Potion of the Old War', 'UI(ow) & player.buff(Shadow Blades) & player.sated & toggle(Cooldowns)'}, -- Dont want to use before hero
 	--actions.cds+=/blood_fury,if=stealthed.rogue
 	{ 'Blood Fury', 'player.stealthed'},
 	--actions.cds+=/berserking,if=stealthed.rogue
 	{ 'Berserking', 'player.stealthed'},
 	--actions.cds+=/arcane_torrent,if=stealthed.rogue&energy.deficit>70
-	{ 'Arcane Torrent', 'player.stealthed & player.energy.deficit > 70'},
+	{ 'Arcane Torrent', 'player.stealthed & player.deficit > 70'},
 	--actions.cds+=/shadow_blades,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*0.5|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
 	{ 'Shadow Blades', 'player.combopoints.deficit >= 2 & player.stealthed & toggle(Cooldowns)'},
 	--actions.cds+=/goremaws_bite,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*(0.4+equipped.denial_of_the_halfgiants*0.2)|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
@@ -86,6 +86,10 @@ local finish = {
 	{ 'Nightblade', 'target.deathin > 8 & target.debuff.duration <= 4.5'},
 	--actions.finish+=/nightblade,cycle_targets=1,if=target.time_to_die-remains>8&mantle_duration=0&((refreshable&(!finality|buff.finality_nightblade.up))|remains<tick_time*2)
 	{ 'Nightblade', 'focus.enemy & focus.deathin > 8 & focus.debuff.duration <= 4.5 ', 'focus'},
+	{ 'Nightblade', 'mouseover.enemy & focus.deathin > 8 & mouseover.debuff.duration <= 4.5 ', 'mouseover'},
+	{ 'Nightblade', 'boss1.enemy & focus.deathin > 8 & boss1.debuff.duration <= 4.5 ', 'boss1'},
+	{ 'Nightblade', 'boss2.enemy & focus.deathin > 8 & boss2.debuff.duration <= 4.5 ', 'boss2'},
+	{ 'Nightblade', 'boss3.enemy & focus.deathin > 8 & boss3.debuff.duration <= 4.5 ', 'boss3'},
 	--actions.finish+=/death_from_above
 	{ 'Death from Above'},
 	--actions.finish+=/eviscerate
@@ -103,11 +107,13 @@ local sprinted = {
 local stealthCooldowns = {
 	--# Stealth Cooldowns
 	--actions.stealth_cds=vanish,if=mantle_duration=0&cooldown.shadow_dance.charges_fractional<variable.shd_fractionnal+(equipped.mantle_of_the_master_assassin&time<30)*0.3
-	--{ 'Vanish', 
+	{ 'Vanish', '!player.buff(Master Assassin\'s Initiative) & player.spell(Shadow Dance).charges < 2.45 + { player.xequipped(144236) & time < 30} * 0.3'},
 	--actions.stealth_cds+=/shadow_dance,if=charges_fractional>=variable.shd_fractionnal
 	{ 'Shadow Dance', 'player.spell.charges >= 2.45'},
 	--actions.stealth_cds+=/pool_resource,for_next=1,extra_amount=40
+	{ '%pause', 'player.energy < 40'}, 
 	--actions.stealth_cds+=/shadowmeld,if=energy>=40&energy.deficit>=10+variable.ssw_refund
+	{ 'Shadowmeld', 'player.energy >= 40 & player.deficit >= 10 + variable.ssw_refund'},
 	--actions.stealth_cds+=/shadow_dance,if=combo_points.deficit>=5-talent.vigor.enabled
 	{ 'Shadow Dance', 'player.combopoints.deficit >= 5'},
 }
@@ -115,7 +121,7 @@ local stealthCooldowns = {
 local stealth_als = {
 	--# Stealth Action List Starter
 	--actions.stealth_als=call_action_list,name=stealth_cds,if=energy.deficit<=variable.stealth_threshold&(!equipped.shadow_satyrs_walk|cooldown.shadow_dance.charges_fractional>=variable.shd_fractionnal|energy.deficit>=10)
-	{ stealthCooldowns, 'player.energy.time_to_max <= gcd'},
+	{ stealthCooldowns, 'player.deficit <= variable.stealth_threshold'},
 	--actions.stealth_als+=/call_action_list,name=stealth_cds,if=mantle_duration>2.3
 	{ stealthCooldowns, 'player.buff(Master Assassin\'s Initiative).duration > 2.3'},
 	--actions.stealth_als+=/call_action_list,name=stealth_cds,if=spell_targets.shuriken_storm>=5
@@ -152,7 +158,7 @@ local simCraft = {
 	--actions+=/run_action_list,name=stealthed,if=stealthed.all
 	{ stealthed, 'player.stealthed'},
 	--actions+=/nightblade,if=target.time_to_die>8&remains<gcd.max&combo_points>=4
-	{ 'Nightblade', 'target.deathin > 8 & target.debuff.duration < gcd & player.combopoints >= 4'},
+	{ 'Nightblade', 'target.deathin > 8 & target.debuff.duration < gcd.max & player.combopoints >= 4'},
 	--actions+=/sprint,if=!equipped.draught_of_souls&mantle_duration=0&energy.time_to_max>=1.5&cooldown.shadow_dance.charges_fractional<variable.shd_fractionnal&!cooldown.vanish.up&target.time_to_die>=8&(dot.nightblade.remains>=14|target.time_to_die<=45)
 	{ 'Sprint', 'energy.time_to_max >= 1.5 & spell(Shadow Dance).charges < 2.45 & !spell(Vanish).cooldown & target.deathin >= 8 & target.debuff(Nightblade).duration >= 14'},
 	--actions+=/sprint,if=equipped.draught_of_souls&trinket.cooldown.up&mantle_duration=0
@@ -161,19 +167,27 @@ local simCraft = {
 	--actions+=/call_action_list,name=finish,if=combo_points>=5|(combo_points>=4&combo_points.deficit<=2&spell_targets.shuriken_storm>=3&spell_targets.shuriken_storm<=4)
 	{ finish, 'player.combopoints >= 5 || player.combopoints >= 4 & player.combopoints deficit <= 2 & player.area(10).enemies >= 3 & player.area(10).enemies <= 4'},
 	--actions+=/call_action_list,name=build,if=energy.deficit<=variable.stealth_threshold
-	{ build, 'player.energy.deficit <= variable.stealth_threshold || energy.time_to_max <= gcd'},
+	{ build, 'player.deficit <= variable.stealth_threshold || energy.time_to_max <= gcd'},
+}
+
+local utility = {
+	{ 'Tricks of the Trade', '!focus.buff & !focus.enemy', 'focus'},
+	{ 'Tricks of the Trade', '!tank.buff', 'tank'},
 }
 
 local preCombat = {
 	{ 'Tricks of the Trade', '!focus.buff & pull_timer <= 4', 'focus'},
 	{ 'Tricks of the Trade', '!tank.buff & pull_timer <= 4', 'tank'},
+	{ 'Symbols of Death', 'pull_timer <= 11'},
 	{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(ow)'},
+	{ 'Symbols of Death', 'pull_timer <= 1'},
 	{ 'Shadowstep', 'pull_timer <= 0'},
 }
 
 local inCombat = {
 	{ keybinds},
 	{ interrupts, 'target.interruptAt(35)'},
+	{ utility},
 	{ simCraft}
 }
 

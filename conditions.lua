@@ -53,6 +53,28 @@ NeP.DSL:Register('rtb', function()
 	return buffCount
 end)
 
+NeP.DSL:Register('poisoned_bleeds', function()
+	local rupture = UnitDebuff('target', 'Rupture')
+	local garrote = UnitDebuff('target', 'Garrote')
+	local mutilatedFlesh = UnitDebuff('target', 'Mutilated Flesh')
+	local int = 0
+	
+	if rupture then
+		int = int + 1
+	end
+	if garrote then
+		int = int + 1
+	end
+	if mutilatedFlesh then
+		int = int + 1
+	end
+	return int
+end)
+
+NeP.DSL:Register('gcd.max', function()
+    return NeP.DSL:Get('gcd')()
+end)
+
 NeP.DSL:Register('sb.up', function()
     local shadowBlades = UnitBuff('player', 'Shadow Blades')
 	if shadowBlades then
@@ -63,6 +85,13 @@ end)
 
 NeP.DSL:Register('prem.up', function()
 	if NeP.DSL:Get('talent.enabled')(nil, '6,1') then
+		return 1
+	end
+    return 0
+end)
+
+NeP.DSL:Register('vw.up', function()
+	if NeP.DSL:Get('talent.enabled')(nil, '7,1') then
 		return 1
 	end
     return 0
@@ -84,7 +113,12 @@ end)
 NeP.DSL:Register('deficit', function()
     local max = UnitPowerMax('player')
     local curr = UnitPower('player')
+	--print(max - curr)
     return (max - curr)
+end)
+
+NeP.DSL:Register('gcd.remains', function()
+    return NeP.DSL:Get('spell.cooldown')('player', '61304')
 end)
 
 NeP.DSL:Register('combopoints.deficit', function(target)
@@ -139,6 +173,43 @@ NeP.DSL:Register('variable.stealth_threshold', function()
 	local x = ((15 + NeP.DSL:Get('talent.enabled')(nil, '3,3')) * (35 + NeP.DSL:Get('talent.enabled')(nil, '7,1')) * (25 + NeP.DSL:Get('variable.ssw_er')()))
 	--print(x)
     return x
+end)
+
+NeP.DSL:Register('variable.energy_regen_combined', function()
+	--actions=variable,name=energy_regen_combined,value=energy.regen+poisoned_bleeds*(7+talent.venom_rush.enabled*3)%2 
+    local x = (NeP.DSL:Get('energy.regen')() + NeP.DSL:Get('poisoned_bleeds')() * (7 + NeP.DSL:Get('vw.up')() * 3) / 2 )
+	--print(x)
+    return x
+end)
+
+NeP.DSL:Register('variable.energy_time_to_max_combined', function()
+	--actions+=/variable,name=energy_time_to_max_combined,value=energy.deficit%variable.energy_regen_combined
+    local x = NeP.DSL:Get('deficit')() / NeP.DSL:Get('variable.energy_regen_combined')()
+	--print(x)
+    return x
+end)
+
+NeP.DSL:Register('rogue.t19', function()
+	local int = 0
+	if IsEquippedItem('138326') then -- Chest
+		int = int + 1
+	end
+	if IsEquippedItem('138329') then  -- Gloves
+		int = int + 1
+	end
+	if IsEquippedItem('138332') then  -- Head
+		int = int + 1
+	end
+	if IsEquippedItem('138335') then  -- Pants
+		int = int + 1
+	end
+	if IsEquippedItem('138338') then  -- Shoulders
+		int = int + 1
+	end
+	if IsEquippedItem('138371') then  -- Cloak
+		int = int + 1
+	end
+	return int
 end)
 
 NeP.DSL:Register('stealthed', function()
