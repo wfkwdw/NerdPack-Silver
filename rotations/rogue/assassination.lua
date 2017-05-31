@@ -18,7 +18,7 @@ local GUI = {
 	{type = 'checkbox',		text = 'Vanish',						key = 'van', 	default = true},
 	{type = 'checkbox',		text = 'Vendetta',						key = 'ven', 	default = true},
 	{type = 'checkbox',		text = 'Potion of the Old War',			key = 'ow', 	default = true},
-	{type = 'ruler'},{type = 'spacer'},} 
+	{type = 'ruler'},{type = 'spacer'},} 
 
 local exeOnLoad = function()
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
@@ -40,8 +40,9 @@ local survival = {
 	{ 'Feint', 'boss1.buff(Blood of the Father) & !player.buff'},
 
 	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
-	{ 'Evasion', 'player.threat >= 100'},
-		
+	{ 'Feint', 'player.health <= 75 & !player.buff & talent(4,2)'},
+	{ 'Feint', '!player.buff & player.health <= UI(cv) & player.xequipped(137069)'},
+	
 	-- Health Pot
 	{ '#Ancient Healing Potion', 'UI(hp_check) & player.health <= UI(hp_spin)'},
 	
@@ -49,14 +50,22 @@ local survival = {
 	{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
 	
 	-- Tich
-	{ 'Feint', '!player.buff.duration & player.debuff(Carrion Plague).count >= 2'},
+	{ 'Feint', '!player.buff & player.debuff(Carrion Plague)'},
+	
+	-- Krosus
+	{ 'Feint', '!player.buff & target.casting(Slam).percent >= 75 & !player.lastcast'},
+	{ 'Feint', '!player.buff & target.casting(Orb of Destruction).percent >= 75 & !player.lastcast'},
+	{ 'Feint', '!player.buff & target.casting(Burning Pitch).percent >= 75 & !player.lastcast'},
+	{ 'Feint', '!player.buff & boss1.casting(Slam).percent >= 75 & !player.lastcast'},
+	{ 'Feint', '!player.buff & boss1.casting(Orb of Destruction).percent >= 75 & !player.lastcast'},
+	{ 'Feint', '!player.buff & boss1.casting(Burning Pitch).percent >= 75 & !player.lastcast'},
 }
 
 local cooldowns = {
 	--# Cooldowns
 	--actions.cds=potion,name=old_war,if=buff.bloodlust.react|target.time_to_die<=25|debuff.vendetta.up&cooldown.vanish.remains<5
 	{ '#Potion of the Old War', 'UI(ow) & player.hashero'},
-	{ '#Potion of the Old War', 'UI(ow) & target.ttd <= 25'},
+	--{ '#Potion of the Old War', 'UI(ow) & target.ttd <= 25 & player.sated'},
 	{ '#Potion of the Old War', 'UI(ow) & target.debuff(Vendetta) & player.spell(Vanish).cooldown <= 5 & player.sated'},
 	--actions.cds+=/use_item,name=draught_of_souls,if=energy.deficit>=35+variable.energy_regen_combined*2&(!equipped.mantle_of_the_master_assassin|cooldown.vanish.remains>8)&(!talent.agonizing_poison.enabled|debuff.agonizing_poison.stack>=5&debuff.surge_of_toxins.remains>=3)
 	--actions.cds+=/use_item,name=draught_of_souls,if=mantle_duration>0&mantle_duration<3.5&dot.kingsbane.ticking
@@ -94,6 +103,7 @@ local build = {
 	--actions.build+=/mutilate
 	{ 'Mutilate'},
 	--actions.build+=/poisoned_knife,cycle_targets=1,if=talent.agonizing_poison.enabled&debuff.agonizing_poison.remains<debuff.agonizing_poison.duration*0.3&debuff.agonizing_poison.stack>=5
+	{ 'Poisoned Knife', 'talent(7,1) & target.debuff(Agonizing Poison).duration <= 3.6'},
 }
 	
 local finish = {
@@ -101,7 +111,7 @@ local finish = {
 	--actions.finish=death_from_above,if=combo_points>=5
 	{ 'Death from Above', 'player.combopoints >= 5'},
 	--actions.finish+=/envenom,if=combo_points>=4&(debuff.vendetta.up|mantle_duration>=gcd.remains+0.2|debuff.surge_of_toxins.remains<gcd.remains+0.2|energy.deficit<=25+variable.energy_regen_combined)
-	{ 'Envenom', 'player.combopoints >= 4 & { target.debuff(Vendetta) || player.buff(Master Assassin\'s Initiative).duration >= gcd.remains + 0.2 || target.debuff(Surge of Toxins).duration < gcd.remains + 0.2 ||  player.deficit <= 25 + variable.energy_regen_combined}'},
+	{ 'Envenom', 'player.combopoints >= 4 & { target.debuff(Vendetta) || player.buff(Master Assassin\'s Initiative).duration >= gcd.remains + 0.2 || target.debuff(Surge of Toxins).duration < gcd.remains + 0.4 ||  player.deficit <= 25 + variable.energy_regen_combined}'},
 	--actions.finish+=/envenom,if=talent.elaborate_planning.enabled&combo_points>=3+!talent.exsanguinate.enabled&buff.elaborate_planning.remains<gcd.remains+0.2
 	{ 'Envenom', 'talent(1,2) & player.combopoints >= 3 & player.buff(Elaborate Planning).duration < gcd.remains + 0.2'},
 }
@@ -130,6 +140,10 @@ local maintain = {
 	{ 'Rupture', 'talent(6,3) & {{player.combopoints.deficit = 0 & player.spell(Exsanguinate).cooldown < 1} || { !target.debuff || { time > 10 || player.combopoints >= 2}}}'},
 	--actions.maintain+=/rupture,cycle_targets=1,if=combo_points>=4&refreshable&(pmultiplier<=1|remains<=tick_time)&(!exsanguinated|remains<=tick_time*2)&target.time_to_die-remains>6
 	{ 'Rupture', 'player.combopoints >= 4 & target.debuff.duration <= 7.2 & !target.debuff(Exsanguinate) & target.deathin > 6'},
+	{ 'Rupture', 'mouseover.inmelee & mouseover.enemy & UI(multi) & player.combopoints >= 4 & mouseover.debuff.duration <= 7.2 & !mouseover.debuff(Exsanguinate) & mouseover.deathin > 6', 'mouseover'},
+	{ 'Rupture', 'boss1.inmelee & boss1.enemy & UI(multi) &player.combopoints >= 4 & boss1.debuff.duration <= 7.2 & !boss1.debuff(Exsanguinate) & boss1.deathin > 6', 'boss1'},
+	{ 'Rupture', 'boss2.inmelee & boss2.enemy & UI(multi) &player.combopoints >= 4 & boss2.debuff.duration <= 7.2 & !boss2.debuff(Exsanguinate) & boss2.deathin > 6', 'boss2'},
+	{ 'Rupture', 'boss3.inmelee & boss3.enemy & UI(multi) &player.combopoints >= 4 & boss3.debuff.duration <= 7.2 & !boss3.debuff(Exsanguinate) & boss3.deathin > 6', 'boss3'},
 	--actions.maintain+=/call_action_list,name=kb,if=combo_points.deficit>=1+(mantle_duration>=gcd.remains+0.2)
 	{ kingsbane, 'player.combopoints.deficit >= 1'},
 	--actions.maintain+=/pool_resource,for_next=1
@@ -138,18 +152,24 @@ local maintain = {
 }
 
 local simCraft = {
+	{ survival},
 	--# Executed every time the actor is available.
 	--actions=variable,name=energy_regen_combined,value=energy.regen+poisoned_bleeds*(7+talent.venom_rush.enabled*3)%2 
 	--actions+=/variable,name=energy_time_to_max_combined,value=energy.deficit%variable.energy_regen_combined
 	--actions+=/call_action_list,name=cds
-	{ cooldowns, 'target.boss & toggle(cooldowns)'},
+	{ cooldowns, 'toggle(cooldowns)'},
 	--actions+=/call_action_list,name=maintain
 	{ maintain},
 	--# The 'active_dot.rupture>=spell_targets.rupture' means that we don't want to envenom as long as we can multi-rupture (i.e. units that don't have rupture yet).
 	--actions+=/call_action_list,name=finish,if=(!talent.exsanguinate.enabled|cooldown.exsanguinate.remains>2)&(!dot.rupture.refreshable|(dot.rupture.exsanguinated&dot.rupture.remains>=3.5)|target.time_to_die-dot.rupture.remains<=6)&active_dot.rupture>=spell_targets.rupture
-	{ finish, '!talent(6,3) & !target.debuff(Rupture).duration <= 7.2'}, -- Doesnt support Exsanguinate
+	{ finish}, -- Doesnt support Exsanguinate
 	--actions+=/call_action_list,name=build,if=combo_points.deficit>1|energy.deficit<=25+variable.energy_regen_combined
 	{ build, 'player.combopoints.deficit > 1 || player.deficit <= 25 + variable.energy_regen_combined'},
+}
+
+local utility = {
+	{ 'Tricks of the Trade', '!focus.buff & !focus.enemy', 'focus'},
+	{ 'Tricks of the Trade', '!tank.buff', 'tank'},
 }
 
 local preCombat = {
@@ -160,9 +180,12 @@ local preCombat = {
 }
 
 local inCombat = {
+	{ '/targetenemy [dead][noharm]', '{target.dead || !target.exists} & !player.area(40).enemies=0'},
 	{ '/startattack', '!isattacking & target.enemy'},
+	{ utility},
 	{ keybinds},
 	{ interrupts, 'target.interruptAt(35)'},
+	{ 'Feint', '!player.buff & player.debuff(Carrion Plague)'},
 	{ survival},
 	{ '/startattack', '!isattacking & target.enemy'},
 	{ simCraft, 'target.enemy'},
@@ -170,10 +193,10 @@ local inCombat = {
 
 local outCombat = {
 	-- Poisons
-	{ 'Deadly Poison', 'player.buff.duration <= 600 & !player.lastcast & !talent(6,1)'},
-	{ 'Agonizing Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(6,1)'},
-	{ 'Leeching Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(4,1)'},
-	{ 'Crippling Poison', 'player.buff.duration <= 600 & !player.lastcast & !talent(4,1)'},
+	{ 'Deadly Poison', 'player.buff.duration <= 600 & !player.lastcast & !talent(6,1) & !moving'},
+	{ 'Agonizing Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(6,1) & !moving'},
+	{ 'Leeching Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(4,1) & !moving'},
+	{ 'Crippling Poison', 'player.buff.duration <= 600 & !player.lastcast & !talent(4,1) & !moving'},
 		
 	{ 'Stealth', '!player.buff & !player.buff(Vanish)'},
 	{ keybinds},
