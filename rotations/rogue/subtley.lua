@@ -37,6 +37,7 @@ local interrupts = {
 local survival = {
 	{ 'Crimson Vial', 'player.health <= UI(cv) & player.energy >= 35'},
 	{ 'Evasion', 'player.threat >= 100'},
+	{ 'Feint', '!player.buff & player.health <= UI(cv) & player.xequipped(137069)'},
 		
 	-- Health Pot
 	{ '#Ancient Healing Potion', 'UI(hp_check) & player.health <= UI(hp_spin)'},

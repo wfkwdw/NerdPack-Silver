@@ -123,7 +123,7 @@ local Keybinds = {
 }
 
 local inCombat = {
-	{'/startattack', '!isattacking'},
+	--{ '/startattack', '!isattacking'},
 	{Keybinds},	
 	{'883', '!pet.exists & toggle(PetSummon)'},	
 --	{BRez, '!focus.alive'},
@@ -137,8 +137,8 @@ local inCombat = {
 }
 
 local outCombat = {
-	{Keybinds},
-	{'Dismiss Pet', 'pet.exists & toggle(PetSummon) & !player.buff(Feign Death)'},
+	{ Keybinds},
+	{ 'Dismiss Pet', 'pet.exists & toggle(PetSummon) & !player.buff(Feign Death)'},
 }
 
 NeP.CR:Add(253, {
