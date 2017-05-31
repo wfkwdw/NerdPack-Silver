@@ -23,3 +23,5 @@ rotations\hunter\beast_mastery.lua
 rotations\warlock\demonology.lua
 rotations\warlock\destruction.lua
 rotations\warlock\affliction.lua
+
+rotations\mage\frost.lua

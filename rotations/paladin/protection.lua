@@ -91,6 +91,8 @@ local activeMitigation = {
 	
 	-- Light of the Protector
 	{ 'Light of the Protector', 'player.health <= UI(lotp)'},
+	{ 'Light of the Protector', 'tank.health <= UI(lotp)', 'tank'},
+	{ 'Light of the Protector', 'tank2.health <= UI(lotp)', 'tank2'},
 	{ 'Light of the Protector', 'lowest.health <= UI(lotp)', 'lowest'},
 }
 
@@ -131,7 +133,8 @@ local rotation = {
 }
 
 local inCombat = {
-	{ '/startattack', '!isattacking & target.health >= 1'},
+	{ '/targetenemy [dead][noharm]', '{target.dead || !target.exists} & !player.area(40).enemies=0'},
+	{ '/startattack', '!isattacking & target.exists'},
 	{ target},
 	{ interrupts, 'target.interruptAt(50)'},
 	{ activeMitigation},
