@@ -182,13 +182,10 @@ local preCombat = {
 local inCombat = {
 	{ '/targetenemy [dead][noharm]', '{target.dead || !target.exists} & !player.area(40).enemies=0'},
 	{ '/startattack', '!isattacking & target.enemy'},
-<<<<<<< HEAD
 	{ utility},
 	{ keybinds},
-=======
 	{ utility},
 	{ keybinds},
->>>>>>> origin/master
 	{ interrupts, 'target.interruptAt(35)'},
 	{ 'Feint', '!player.buff & player.debuff(Carrion Plague)'},
 	{ survival},
