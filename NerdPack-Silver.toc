@@ -24,4 +24,6 @@ rotations\warlock\demonology.lua
 rotations\warlock\destruction.lua
 rotations\warlock\affliction.lua
 
+rotations\demonhunter\Havoc.lua
+
 rotations\mage\frost.lua

@@ -24,6 +24,7 @@ local GUI = {
 	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
 	{type = 'checkspin',text = 'Healing Potion',						key = 'P_HP', 	default = false},
 	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = false},
+	{type = 'checkbox', text = 'Auto Ress out of combat', 				key = 'rezz', 	default = false},
 	{type = 'ruler'}, {type = 'spacer'},
 		
 	--------------------------------
@@ -77,8 +78,16 @@ local survival = {
 }
 
 local topUp = { 
-	{'Holy Shock', nil, 'mouseover'},
-	{'Flash of Light', nil, 'mouseover'},
+	{ 'Holy Shock', nil, 'mouseover'},
+	{ 'Flash of Light', nil, 'mouseover'},
+}
+
+local oocTopUp = {
+	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 & player.buff(Rule of Law)'},
+	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3'},
+	{ 'Light of Dawn', 'player.buff(Divine Purpose)'},
+	{ 'Holy Shock', 'lowestpredicted.health < 90', 'lowestpredicted'},
+	{ 'Holy Light', 'lowestpredicted.health < 90 & !player.moving', 'lowestpredicted'},
 }
 
 local DPS = {
@@ -119,14 +128,7 @@ local aoeHealing = {
 }
 
 local healing = {
-	-- Add an Aura of Sacrifice rotation here!
-	--(Wings and Holy Avenger and Tyrs pre cast)
-	--(Bestow Faith or Hammer pre cast)
-	--(Divine Shield pre cast)
-	--Judgement of Light 
-	--Aura Mastery 
-
-	{{
+	{{ -- Aura of Sacrifice Rotation
 		{ 'Avenging Wrath'},
 		{ 'Holy Avenger'},
 		{ 'Holy Shock', nil, 'lowestpredicted'},
@@ -159,21 +161,23 @@ local healing = {
 	{ 'Holy Shock', 'tank.health <= UI(T_HS)', 'tank'},
 	{ 'Holy Shock', 'tank2.health <= UI(T_HS)', 'tank2'},
 	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
-	{ 'Holy Shock', 'mouseover.health <= UI(L_HS) & !mouseover.enemy', 'mouseover'},
 	
 	{ 'Flash of Light', 'lbuff(200654).health <= UI(L_FoL)', 'lbuff(200654)'},
 	
+	{ 'Light of the Martyr', '!player & lowest.health <= UI(L_FoL) & { player.buff(Divine Shield) || player.buff(Xavaric\'s Magnum Opus) }', 'lowest'},
 	{ 'Flash of Light', 'tank.health <= UI(T_FoL)', 'tank'},
 	{ 'Flash of Light', 'tank2.health <= UI(T_FoL)', 'tank2'},
 	{ '!Flash of Light', 'lowestpredicted.health <= UI(L_FoL) & player.casting(Holy Light) & player.casting.percent <= 50', 'lowestpredicted'},
 	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL)', 'lowestpredicted'},
-	{ 'Flash of Light', 'mouseover.health <= UI(L_FoL) & !mouseover.enemy', 'mouseover'},
 	
 	{ 'Judgment', 'target.enemy'}, -- Keep up dmg reduction buff
 	
+	-- Grievous Wound (M+)
+	{ 'Holy Shock', nil, 'ldebuff(Grievous Wound)'},
+	{ 'Flash of Light', nil, 'ldebuff(Grievous Wound)'},
+	
 	{ 'Holy Light', 'tank.health <= UI(T_HL)', 'tank'},
 	{ 'Holy Light', 'tank2.health <= UI(T_HL)', 'tank2'},
-	{ 'Holy Light', 'mouseover.health <= UI(L_FoL) & !mouseover.enemy', 'mouseover'},
 	{ 'Holy Light', 'lowestpredicted.health <= UI(L_HL)', 'lowestpredicted'},
 }
 
@@ -199,11 +203,13 @@ local cooldowns = {
 local moving = {
 	{ aoeHealing},
 	
+	{ 'Holy Shock', nil, 'ldebuff(Grievous Wound)'},
+	
 	{{
 		{ 'Light of the Martyr', '!player & tank.health <= UI(T_LotM)', 'tank'},
 		{ 'Light of the Martyr', '!player & tank2.health <= UI(T_LotM)', 'tank2'},
 		{ 'Light of the Martyr', '!player & lowestpredicted.health <= UI(L_LotM)', 'lowestpredicted'},
-	}, 'player.health >= 40'},
+	}, 'player.health >= 40 || player.buff(Divine Shield)'},
 	
 	{ 'Holy Shock', 'tank.health <= UI(T_HS)', 'tank'},
 	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
@@ -212,12 +218,22 @@ local moving = {
 }
 
 local manaRestore = {
-	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS)', 'lowestpredicted'},
-	{ 'Holy Light', 'tank.health <= UI(T_HL)', 'tank'},
-	{ 'Holy Light', 'tank2.health <= UI(T_HL)', 'tank2'},
-	{ 'Holy Light', 'lowestpredicted.health <= UI(L_HL)', 'lowestpredicted'},
+	{ aoeHealing},
 	
-	{ 'Judgment', 'target.enemy'},
+	-- Holy Shock
+	{ 'Holy Shock', 'tank.health <= UI(T_HS) / 2', 'tank'},
+	{ 'Holy Shock', 'tank2.health <= UI(T_HS) / 2', 'tank2'},
+	{ 'Holy Shock', 'lowestpredicted.health <= UI(L_HS) / 2', 'lowestpredicted'},
+	
+	-- Flash of Light
+	{ 'Flash of Light', 'tank.health <= UI(T_FoL) / 2', 'tank'},
+	{ 'Flash of Light', 'tank2.health <= UI(T_FoL) / 2', 'tank2'},
+	{ 'Flash of Light', 'lowestpredicted.health <= UI(L_FoL) / 2', 'lowestpredicted'},
+	
+	-- Holy Light
+	{ 'Holy Light', 'tank.health <= UI(T_HL) / 2', 'tank'},
+	{ 'Holy Light', 'tank2.health <= UI(T_HL) / 2', 'tank2'},
+	{ 'Holy Light', 'lowestpredicted.health <= UI(L_HL) / 2', 'lowestpredicted'},
 }
 
 local inCombat = {
@@ -231,7 +247,7 @@ local inCombat = {
 	{ tank},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront & lowestpredicted.health >= UI(G_DPS)'},
 	{ moving, 'player.moving'},
-	{ manaRestore, 'player.mana <= UI(P_MR)'},
+	{ manaRestore, 'player.mana < UI(P_MR)'},
 	{ healing, '!player.moving & player.mana >= UI(P_MR)'},
 	{ DPS, 'toggle(dps) & target.enemy & target.infront'},
 }
@@ -244,6 +260,12 @@ local outCombat = {
 	-- Precombat
 	{ 'Bestow Faith', 'pull_timer <= 3', 'tank'},
 	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
+	
+	{ oocTopUp},
+	
+	{ '%ressdead(Absoution)', 'UI(rezz)'},
+	
+	--{ 'Flash of Light', nil, 'ldebuff(Forbearance)'},
 }
 
 NeP.CR:Add(65, {

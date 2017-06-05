@@ -220,3 +220,64 @@ NeP.DSL:Register('stealthed', function()
         return false
     end
 end)
+
+---------------------------------------
+------------ Demon Hunter -------------
+---------------------------------------
+
+NeP.DSL:Register('variable.waiting_for_nemesis', function()
+	--actions+=/variable,name=waiting_for_nemesis,value=!(!talent.nemesis.enabled|cooldown.nemesis.ready|cooldown.nemesis.remains>target.time_to_die|cooldown.nemesis.remains>60)
+	if NeP.DSL:Get('talent.enabled')(nil, '5,3') then
+		if NeP.DSL:Get('spell.cooldown')(nil, 'Nemesis') == 0 then
+			return false
+		end
+		if NeP.DSL:Get('spell.cooldown')(nil, 'Nemesis') > NeP.DSL:Get('deathin')() then
+			return false
+		end	
+		if NeP.DSL:Get('spell.cooldown')(nil, 'Nemesis') > 60 then
+			return false
+		end
+		return true
+	end
+	return false
+end)
+
+NeP.DSL:Register('variable.waiting_for_chaos_blades', function()
+	--actions+=/variable,name=waiting_for_chaos_blades,value=!(!talent.chaos_blades.enabled|cooldown.chaos_blades.ready|cooldown.chaos_blades.remains>target.time_to_die|cooldown.chaos_blades.remains>60)
+	if NeP.DSL:Get('talent.enabled')(nil, '5,3') then
+		if NeP.DSL:Get('spell.cooldown')(nil, 'Chaos Blades') == 0 then
+			return false
+		end
+		if NeP.DSL:Get('spell.cooldown')(nil, 'Chaos Blades') > NeP.DSL:Get('deathin')() then
+			return false
+		end	
+		if NeP.DSL:Get('spell.cooldown')(nil, 'Chaos Blades') > 60 then
+			return false
+		end
+		return true
+	end
+	return false
+end)
+
+--actions+=/variable,name=pooling_for_meta,value=!talent.demonic.enabled&cooldown.metamorphosis.remains<6&fury.deficit>30&(!variable.waiting_for_nemesis|cooldown.nemesis.remains<10)&(!variable.waiting_for_chaos_blades|cooldown.chaos_blades.remains<6)
+NeP.DSL:Register('variable.pooling_for_meta', function()
+	if not NeP.DSL:Get('talent.enabled')(nil, '7,3') and NeP.DSL:Get('spell.cooldown')(nil, 'Metamorphosis') < 6 and NeP.DSL:Get('deficit')() > 30 and ( NeP.DSL:Get('variable.waiting_for_nemesis')() == false or NeP.DSL:Get('spell.cooldown')(nil, 'Nemesis') < 10) and ( NeP.DSL:Get('variable.waiting_for_chaos_blades')() == false or NeP.DSL:Get('spell.cooldown')(nil, 'Nemesis') < 6) then
+		return true
+	end	
+	return false
+end)
+
+--actions+=/variable,name=blade_dance,value=talent.first_blood.enabled|set_bonus.tier20_2pc|spell_targets.blade_dance1>=3+(talent.chaos_cleave.enabled*2)
+--actions+=/variable,name=pooling_for_blade_dance,value=variable.blade_dance&fury-40<35-talent.first_blood.enabled*20&(spell_targets.blade_dance1>=3+(talent.chaos_cleave.enabled*2))
+
+
+NeP.DSL:Register('variable.pooling_for_chaos_strike', function()
+--actions+=/variable,name=pooling_for_chaos_strike,value=talent.chaos_cleave.enabled&fury.deficit>40&!raid_event.adds.up&raid_event.adds.in<2*gcd
+	if NeP.DSL:Get('talent.enabled')(nil, '3,1') and NeP.DSL:Get('deficit')() > 40 then
+		return true
+	end
+	return false
+end)
+
+
+

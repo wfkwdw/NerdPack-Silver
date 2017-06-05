@@ -49,6 +49,10 @@ local survival = {
 	-- Healthstones
 	{ '#Healthstone', 'UI(hs_check) & player.health <= UI(hs_spin)'},
 	
+	--------------------------------------
+	------------- T19 Bosses -------------
+	--------------------------------------
+	
 	-- Tich
 	{ 'Feint', '!player.buff & player.debuff(Carrion Plague)'},
 	
@@ -199,7 +203,7 @@ local outCombat = {
 	{ 'Agonizing Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(6,1) & !moving'},
 	{ 'Leeching Poison', 'player.buff.duration <= 600 & !player.lastcast & talent(4,1) & !moving'},
 	{ 'Crippling Poison', 'player.buff.duration <= 600 & !player.lastcast & !talent(4,1) & !moving'},
-		
+
 	{ 'Stealth', '!player.buff & !player.buff(Vanish)'},
 	{ keybinds},
 	{ preCombat}
