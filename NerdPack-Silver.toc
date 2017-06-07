@@ -5,6 +5,7 @@
 ## Dependencies: NerdPack
 
 conditions.lua
+fakeunits.lua
 
 rotations\paladin\protection.lua
 rotations\paladin\holy.lua

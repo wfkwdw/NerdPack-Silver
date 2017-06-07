@@ -173,8 +173,8 @@ local healing = {
 	{ 'Judgment', 'target.enemy'}, -- Keep up dmg reduction buff
 	
 	-- Grievous Wound (M+)
-	{ 'Holy Shock', nil, 'ldebuff(Grievous Wound)'},
-	{ 'Flash of Light', nil, 'ldebuff(Grievous Wound)'},
+	{ 'Holy Shock', nil, 'ldebuffa(Grievous Wound)'},
+	{ 'Flash of Light', nil, 'ldebuffa(Grievous Wound)'},
 	
 	{ 'Holy Light', 'tank.health <= UI(T_HL)', 'tank'},
 	{ 'Holy Light', 'tank2.health <= UI(T_HL)', 'tank2'},
@@ -262,8 +262,8 @@ local outCombat = {
 	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 	
 	-- Grievous Wound (M+)
-	{ 'Holy Shock', nil, 'ldebuff(Grievous Wound)'},
-	{ 'Flash of Light', nil, 'ldebuff(Grievous Wound)'},
+	{ 'Holy Shock', nil, 'ldebuffa(Grievous Wound)'},
+	{ 'Flash of Light', nil, 'ldebuffa(Grievous Wound)'},
 	
 	{ oocTopUp},
 	
