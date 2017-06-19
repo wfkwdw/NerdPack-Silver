@@ -24,6 +24,7 @@ local GUI = {
 	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
 	{type = 'checkspin',text = 'Healing Potion',						key = 'P_HP', 	default = false},
 	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = false},
+	{type = 'spinner',	text = 'Health for LotM',						key = 'P_LotM', default = 40},
 	{type = 'checkbox', text = 'Auto Ress out of combat', 				key = 'rezz', 	default = false},
 	{type = 'ruler'}, {type = 'spacer'},
 		
@@ -101,18 +102,19 @@ local DPS = {
 }
 
 local tank = {
-	{{
-		{ 'Beacon of Light', '!tank.buff(Beacon of Faith) & !tank.buff(Beacon of Light)', 'tank'},
-		{ 'Beacon of Faith', '!tank2.buff(Beacon of Faith) & !tank2.buff(Beacon of Light)', 'tank2'},
-	}, '!talent(7,3)'},
+
+	{ 'Beacon of Light', '!tank.buff(Beacon of Faith) & !tank.buff(Beacon of Light) & !talent(7,3)', 'tank'},
+	{ 'Beacon of Faith', '!tank2.buff(Beacon of Faith) & !tank2.buff(Beacon of Light) & !talent(7,3)', 'tank2'},
+	
+	-- Bestow Faith
 	{ 'Bestow Faith', '!tank.buff & talent(1,1) & tank.health <= 90', 'tank'},
 	{ 'Bestow Faith', '!tank2.buff & talent(1,1) & tank2.health <= 90', 'tank2'},
 }
 
 local encounters = {
 	-- Time Release
-	{ 'Holy Shock', nil, 'ldebuff(Time Release)'},
-	{ 'Flash of Light', 'debuff(Time Release).duration >= 1', 'ldebuff(Time Release)'},
+	{ 'Holy Shock', nil, 'ldebuffa(Time Release)'},
+	{ 'Flash of Light', 'debuff(Time Release).duration >= 1', 'ldebuffa(Time Release)'},
 	
 	-- M Bot
 	{ 'Divine Protection', 'player.debuff(Toxic Spores)'},
@@ -139,24 +141,21 @@ local healing = {
 	{ aoeHealing},
 	
 	-- Tyrs Deliverance
-	{ '200652', 'player.area(15,75).heal >= 3'},
-	{ '200652', 'player.area(22,75).heal >= 3 & player.buff(Rule of Law)'},
+	{ 'Tyr\'s Deliverance', 'player.area(15,75).heal >= 3'},
+	{ 'Tyr\'s Deliverance', 'player.area(22,75).heal >= 3 & player.buff(Rule of Law)'},
 	
 	{ encounters, 'UI(ENC)'},
 	
 	{ 'Light of the Martyr', '!player & player.buff(Maraad\'s Dying Breath) & lowestp.health <= UI(L_FoL)', 'lowestp'},
 	
 	-- Infusion of Light
-	--{ 'Flash of Light', 'player.buff(Infusion of Light).count >= 2', 'lowestp'},
+	--{ 'Holy Light', 'player.buff(Infusion of Light).count >= 2', 'lowestp'},
 	{ 'Flash of Light', 'lowestp.health <= UI(L_FoL) & player.buff(Infusion of Light)', 'lowestp'},
-	{ 'Flash of Light', 'player.buff(Infusion of Light).duration <= 3 & player.buff(Infusion of Light)', 'lowestp'},
+	--{ 'Holy Light', 'player.buff(Infusion of Light).duration <= 3', 'lowestp'},
 	
-	-- Need player health spinner added
-	{{
-		{ 'Light of the Martyr', '!player & tank.health <= UI(T_LotM)', 'tank'},
-		{ 'Light of the Martyr', '!player & tank2.health <= UI(T_LotM)', 'tank2'},
-		{ 'Light of the Martyr', '!player & lowestp.health <= UI(L_LotM)', 'lowestp'},
-	}, 'player.health >= 40'},
+	{ 'Light of the Martyr', '!player & tank.health <= UI(T_LotM) & player.health >= UI(P_LotM)', 'tank'},
+	{ 'Light of the Martyr', '!player & tank2.health <= UI(T_LotM) & player.health >= UI(P_LotM)', 'tank2'},
+	{ 'Light of the Martyr', '!player & lowestp.health <= UI(L_LotM) & player.health >= UI(P_LotM)', 'lowestp'},
 	
 	{ 'Holy Shock', 'tank.health <= UI(T_HS)', 'tank'},
 	{ 'Holy Shock', 'tank2.health <= UI(T_HS)', 'tank2'},
@@ -196,8 +195,6 @@ local cooldowns = {
 	
 	{ 'Blessing of Sacrifice', 'tank.health <= UI(T_BoS)', 'tank'}, 
 	{ 'Blessing of Sacrifice', 'tank2.health <= UI(T_BoS)', 'tank2'}, 
-	
-	--{ '#trinket2', 'player.area(40,95).heal >= 3'},
 }
 
 local moving = {

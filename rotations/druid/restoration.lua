@@ -42,7 +42,8 @@ local potions = {
 }
 
 local dps = {
-	
+	{ 'Moonfire', '!debuff'},
+	{ 'Solar Wrath'},
 }
 
 local innervate = {
@@ -81,7 +82,7 @@ local healing = {
 	{ 'Lifebloom', 'tank.buff.duration <= 4.5 & tank.health >= UI(tsm) || !tank.buff', 'tank'},
 	
 	{ 'Wild Growth', 'area(30,75).heal >= 3', 'lowest'}, 
-	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3'}, 
+	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
 	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50'}, 
 	
 	{ 'Regrowth', 'player.buff(Clearcasting)', 'lowest'},
@@ -110,6 +111,7 @@ local healing = {
 local inCombat = {
 	{ keybinds},
 	{ healing},
+	{ dps},
 }
 
 local outCombat = {
