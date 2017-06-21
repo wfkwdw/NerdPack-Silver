@@ -61,8 +61,10 @@ local cooldowns = {
 	{ 'Berserking', 'player.stealthed'},
 	--actions.cds+=/arcane_torrent,if=stealthed.rogue&energy.deficit>70
 	{ 'Arcane Torrent', 'player.stealthed & player.deficit > 70'},
+	--actions.cds+=/symbols_of_death,if=energy.deficit>=40-stealthed.all*30
+	{ 'Symbols of Death', '{ deficit >= 40 & !player.stealthed} || { deficit >= 60 & player.stealthed}'}, 
 	--actions.cds+=/shadow_blades,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*0.5|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
-	{ 'Shadow Blades', 'player.combopoints.deficit >= 2 & player.stealthed & toggle(Cooldowns)'},
+	{ 'Shadow Blades', 'player.combopoints.deficit >= 2 & player.stealthed & toggle(Cooldowns) & !player.stealthed'},
 	--actions.cds+=/goremaws_bite,if=combo_points.deficit>=2+stealthed.all-equipped.mantle_of_the_master_assassin&(cooldown.sprint.remains>buff.shadow_blades.duration*(0.4+equipped.denial_of_the_halfgiants*0.2)|mantle_duration>0|cooldown.shadow_dance.charges_fractional>variable.shd_fractionnal|cooldown.vanish.up|target.time_to_die<=buff.shadow_blades.duration*1.1)
 	{ 'Goremaw\'s Bite', 'player.combopoints.deficit >= 2 & player.stealthed'},
 	--actions.cds+=/marked_for_death,target_if=min:target.time_to_die,if=target.time_to_die<combo_points.deficit|(raid_event.adds.in>40&combo_points.deficit>=cp_max_spend)
@@ -135,8 +137,6 @@ local stealth_als = {
 
 local stealthed = {
 	--# Stealthed Rotation
-	--actions.stealthed=symbols_of_death,if=buff.symbols_of_death.remains<target.time_to_die&buff.symbols_of_death.remains<=buff.symbols_of_death.duration*0.3&(mantle_duration=0|buff.symbols_of_death.remains<=mantle_duration)
-	{ 'Symbols of Death', 'player.buff.duration <= 10.5'},
 	--actions.stealthed+=/call_action_list,name=finish,if=combo_points>=5&(spell_targets.shuriken_storm>=2+talent.premeditation.enabled+equipped.shadow_satyrs_walk|(mantle_duration<=1.3&mantle_duration-gcd.remains>=0.3))
 	{ finish, 'player.combopoints >= 5 & player.area(10).enemies >= 2 + prem.up'},
 	--actions.stealthed+=/shuriken_storm,if=buff.shadowmeld.down&((combo_points.deficit>=3&spell_targets.shuriken_storm>=2+talent.premeditation.enabled+equipped.shadow_satyrs_walk)|(combo_points.deficit>=1+buff.shadow_blades.up&buff.the_dreadlords_deceit.stack>=29))
@@ -179,10 +179,10 @@ local utility = {
 local preCombat = {
 	{ 'Tricks of the Trade', '!focus.buff & pull_timer <= 4', 'focus'},
 	{ 'Tricks of the Trade', '!tank.buff & pull_timer <= 4', 'tank'},
-	{ 'Symbols of Death', 'pull_timer <= 11'},
-	{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(ow)'},
+	--{ 'Symbols of Death', 'pull_timer <= 11'},
+	{ '#Potion of the Old War', '!player.buff & pull_timer <= 2 & UI(ow) & toggle(cooldowns)'},
 	{ 'Symbols of Death', 'pull_timer <= 1'},
-	{ 'Shadowstep', 'pull_timer <= 0'},
+	{ 'Shadowstep', 'pull_timer <= 0.1'},
 }
 
 local inCombat = {

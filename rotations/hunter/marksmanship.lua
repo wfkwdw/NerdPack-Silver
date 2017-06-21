@@ -24,20 +24,11 @@ local GUI = {
 } 
 
 local exeOnLoad = function()
-	
 	print('|cff74ba48MARKSMANSHIP|r')
 	print('|cff74ba48Please check out the ReadMe in the addon folder for proper usage.|r')
 	print('|cff74ba48Health values can be toggled in the routine settings.|r')
 	print('|cff74ba48Please contact Trip on Discord with any problems/suggestions.|r')
 	print('|cff74ba48Suggested Talents: 1/1 - 2/1 - 3/1 - 4/3 - 5/1 or 3 - 6/1 or 3 - 7/1 |r')
-	
-		NeP.Interface:AddToggle({
-			key = 'xBarrage',
-			name = 'Barrage',
-			text = 'Use Barrage in rotation.',
-			icon = 'Interface\\Icons\\Ability_Hunter_RapidRegeneration',
-		})		
-	
 end
 
 local Survival = {

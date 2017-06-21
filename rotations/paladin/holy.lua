@@ -118,6 +118,10 @@ local encounters = {
 	
 	-- M Bot
 	{ 'Divine Protection', 'player.debuff(Toxic Spores)'},
+	
+	-- Sisters of the Moon
+	{ 'Holy Shock', nil, 'ldebuff(Embrace of the Eclipse)'},
+	{ 'Flash of Light', nil, 'ldebuff(Embrace of the Eclipse)'},
 }
 
 local aoeHealing = {
