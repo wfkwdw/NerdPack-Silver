@@ -149,18 +149,19 @@ local healing = {
 	{ innervate, 'player.buff(Innervate).any'},
 	{ 'Lifebloom', 'tank.buff.duration <= 4.5 & tank.health >= UI(tsm) || !tank.buff', 'tank'},
 	
-	{ 'Wild Growth', 'area(30,75).heal >= 3', 'lowest'}, 
+	{ 'Wild Growth', 'area(30,85).heal >= 1', 'lowest'},
 	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
 	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50'}, 
 	
 	{ 'Regrowth', 'player.buff(Clearcasting)', 'lowest'},
 	
-	-- Rejuv
-	{ rejuvSpam},
-	
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank'},
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
 	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
+	
+	-- Rejuv
+	{ rejuvSpam},
+	
 
 	{ 'Regrowth', 'tank.health <= UI(trg)', 'tank'},
 	{ 'Regrowth', 'tank2.health <= UI(trg)', 'tank2'},
@@ -175,8 +176,9 @@ local inCombat = {
 	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	{ keybinds},
 	{ '%dispelall', 'toggle(disp) & spell(Nature\'s Cure).cooldown = 0'},
-	{ healing},
-	{ dps},
+	{ moving, 'player.moving'},
+	{ healing, '!player.moving'},
+	{ dps, 'target.enemy & target.health > 0'},
 }
 
 local outCombat = {
