@@ -1,6 +1,15 @@
 local GUI = {  
-
+	{type = 'header', 	text = 'Generic', align = 'center'},
 	{type = 'spinner', 	text = 'Critical health%', 						key = 'ch', 	default = 30},
+	
+	--------------------------------
+	-- Toggles
+	--------------------------------
+	{type = 'header', 	text = 'Toggles', align = 'center'},
+	{type = 'checkbox',	text = 'Encounter Support',						key = 'ENC', 	default = true},
+	{type = 'checkspin',text = 'Healing Potion/Healthstone',			key = 'P_HP', 	default = true},
+	{type = 'checkspin',text = 'Mana Potion',							key = 'P_MP', 	default = true},
+	{type = 'ruler'}, {type = 'spacer'},
 
 	--------------------------------
 	-- TANK
@@ -28,6 +37,13 @@ local exeOnLoad = function()
 	print('|cffFACC2E Resto Druid Rotation loaded|r')
 	print('|cffFACC2E For Settings Right-Click the MasterToggle and go to Combat Routines Settings |r')
 	print('|cffFACC2E Have a nice day!|r')
+	
+	NeP.Interface:AddToggle({
+		key = 'disp',
+		name = 'Dispell',
+		text = 'ON/OFF Dispel All',
+		icon = 'Interface\\ICONS\\spell_holy_purify', 
+	})
 end
 
 local keybinds = {
@@ -35,40 +51,20 @@ local keybinds = {
 	{ 'Efflorescence', 'keybind(control)', 'cursor.ground'},
 }
 
-
-
 local potions = {
-
+	{ '#127834', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'}, -- Health Pot
+	{ '#Healthstone', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'},
+	{ '#127835', 'UI(P_MP_check) & player.mana <= UI(P_MP_spin)'}, -- Mana Pot
 }
 
 local dps = {
 	{ 'Moonfire', '!debuff'},
+	{ 'Sunfire', '!debuff'},
 	{ 'Solar Wrath'},
-}
-
-local innervate = {
-	{ 'Rejuvenation', nil, 'lnbuff(Rejuvenation)'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation)', 'lnbuff(Rejuvenation (Germination))'},
-	{ 'Regrowth', nil, 'lowest'},
 }
 
 local treeForm = {
 
-}
-
-local moving = {
-	{ 'Lifebloom', 'tank.buff.duration <= 4.5', 'tank'},
-
-	{ 'Rejuvenation', 'health <= UI(trejuv)', 'tank'},
-	{ 'Rejuvenation', 'health <= UI(trejuv)', 'tank2)'},
-	{ 'Rejuvenation', 'health <= UI(lrejuv)', 'lnbuff(Rejuvenation)'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm)', 'tank'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm)', 'tank2'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm)', 'lnbuff(Rejuvenation (Germination))'},
-	
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank'},
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(tsm)', 'lowest'},
 }
 
 local emergency = {
@@ -76,9 +72,81 @@ local emergency = {
 	{ 'Regrowth', nil, 'lowest'},
 }
 
+local rejuvSpam = {
+	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank'},
+	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank2)'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest2'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest3'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest4'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest5'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest6'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest7'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest8'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest9'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest10'},
+	
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'tank'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'tank2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest3'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest4'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest5'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest6'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest7'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest8'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest9'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest10'},
+}
+
+local innervate = {
+	{ 'Rejuvenation', '!buff', 'tank'},
+	{ 'Rejuvenation', '!buff', 'tank2)'},
+	{ 'Rejuvenation', '!buff', 'lowest'},
+	{ 'Rejuvenation', '!buff', 'lowest2'},
+	{ 'Rejuvenation', '!buff', 'lowest3'},
+	{ 'Rejuvenation', '!buff', 'lowest4'},
+	{ 'Rejuvenation', '!buff', 'lowest5'},
+	{ 'Rejuvenation', '!buff', 'lowest6'},
+	{ 'Rejuvenation', '!buff', 'lowest7'},
+	{ 'Rejuvenation', '!buff', 'lowest8'},
+	{ 'Rejuvenation', '!buff', 'lowest9'},
+	{ 'Rejuvenation', '!buff', 'lowest10'},
+	
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'tank'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'tank2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest3'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest4'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest5'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest6'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest7'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest8'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest9'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest10'},
+	
+	{ 'Regrowth', nil, 'lowest'},
+}
+
+local moving = {
+	{ 'Cenarion Ward', '!buff', 'tank'},
+	{ 'Cenarion Ward', '!buff', 'tank2'},
+	{ 'Lifebloom', 'tank.buff.duration <= 4.5', 'tank'},
+	
+	{ rejuvSpam},
+	
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank'},
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
+	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
+}
+
 local healing = {
+	{ 'Cenarion Ward', '!buff', 'tank'},
+	{ 'Cenarion Ward', '!buff', 'tank2'},
 	{ emergency, 'lowest.health <= UI(ch)'}, 
-	{ innervate, 'player.buff(Innervate)'},
+	{ innervate, 'player.buff(Innervate).any'},
 	{ 'Lifebloom', 'tank.buff.duration <= 4.5 & tank.health >= UI(tsm) || !tank.buff', 'tank'},
 	
 	{ 'Wild Growth', 'area(30,75).heal >= 3', 'lowest'}, 
@@ -88,16 +156,11 @@ local healing = {
 	{ 'Regrowth', 'player.buff(Clearcasting)', 'lowest'},
 	
 	-- Rejuv
-	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank'},
-	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank2)'},
-	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lnbuff(Rejuvenation)'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff', 'tank'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff', 'tank2'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff', 'lnbuff(Rejuvenation (Germination))'},
+	{ rejuvSpam},
 	
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank'},
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(tsm)', 'lowest'},
+	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 
 	{ 'Regrowth', 'tank.health <= UI(trg)', 'tank'},
 	{ 'Regrowth', 'tank2.health <= UI(trg)', 'tank2'},
@@ -109,13 +172,17 @@ local healing = {
 }
 
 local inCombat = {
+	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	{ keybinds},
+	{ '%dispelall', 'toggle(disp) & spell(Nature\'s Cure).cooldown = 0'},
 	{ healing},
 	{ dps},
 }
 
 local outCombat = {
+	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	{ keybinds},
+	{ rejuvSpam, '!buff(Eating)'},
 	--{ healing},
 }
 
