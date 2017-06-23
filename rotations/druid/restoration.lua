@@ -155,14 +155,13 @@ local healing = {
 	
 	{ 'Regrowth', 'player.buff(Clearcasting)', 'lowest'},
 	
+	-- Rejuv
+	{ rejuvSpam},
+	
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank'},
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
 	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 	
-	-- Rejuv
-	{ rejuvSpam},
-	
-
 	{ 'Regrowth', 'tank.health <= UI(trg)', 'tank'},
 	{ 'Regrowth', 'tank2.health <= UI(trg)', 'tank2'},
 	{ 'Regrowth', 'lowest.health <= UI(lrg)', 'lowest'},
