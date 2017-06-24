@@ -58,9 +58,13 @@ local potions = {
 }
 
 local dps = {
-	{ 'Moonfire', '!debuff'},
-	{ 'Sunfire', '!debuff'},
+	{ 'Moonfire', '!debuff & player.mana >= 30'},
+	{ 'Sunfire', '!debuff & player.mana >= 30'},
 	{ 'Solar Wrath'},
+}
+
+local cooldowns = {
+	{ 'Innervate', 'player.mana <= 30'},
 }
 
 local treeForm = {
@@ -103,29 +107,29 @@ local rejuvSpam = {
 local innervate = {
 	{ 'Rejuvenation', '!buff', 'tank'},
 	{ 'Rejuvenation', '!buff', 'tank2)'},
-	{ 'Rejuvenation', '!buff', 'lowest'},
-	{ 'Rejuvenation', '!buff', 'lowest2'},
-	{ 'Rejuvenation', '!buff', 'lowest3'},
-	{ 'Rejuvenation', '!buff', 'lowest4'},
-	{ 'Rejuvenation', '!buff', 'lowest5'},
-	{ 'Rejuvenation', '!buff', 'lowest6'},
-	{ 'Rejuvenation', '!buff', 'lowest7'},
-	{ 'Rejuvenation', '!buff', 'lowest8'},
-	{ 'Rejuvenation', '!buff', 'lowest9'},
-	{ 'Rejuvenation', '!buff', 'lowest10'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest2'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest3'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest4'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest5'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest6'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest7'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest8'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest9'},
+	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest10'},
 	
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'tank'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'tank2'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest2'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest3'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest4'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest5'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest6'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest7'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest8'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest9'},
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & !buff(Rejuvenation (Germination))', 'lowest10'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'tank'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'tank2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest3'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest4'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest5'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest6'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest7'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest8'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest9'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest10'},
 	
 	{ 'Regrowth', nil, 'lowest'},
 }
@@ -149,11 +153,11 @@ local healing = {
 	{ innervate, 'player.buff(Innervate).any'},
 	{ 'Lifebloom', 'tank.buff.duration <= 4.5 & tank.health >= UI(tsm) || !tank.buff', 'tank'},
 	
-	{ 'Wild Growth', 'area(30,85).heal >= 1', 'lowest'},
+	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
 	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
 	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50'}, 
 	
-	{ 'Regrowth', 'player.buff(Clearcasting)', 'lowest'},
+	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lowest'},
 	
 	-- Rejuv
 	{ rejuvSpam},
@@ -175,6 +179,7 @@ local inCombat = {
 	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	{ keybinds},
 	{ '%dispelall', 'toggle(disp) & spell(Nature\'s Cure).cooldown = 0'},
+	{ cooldowns},
 	{ moving, 'player.moving'},
 	{ healing, '!player.moving'},
 	{ dps, 'target.enemy & target.health > 0'},
