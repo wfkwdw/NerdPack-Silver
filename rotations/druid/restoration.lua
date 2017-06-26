@@ -172,13 +172,14 @@ local healing = {
 	{ emergency, 'lowest.health <= UI(ch)'}, 
 	{ innervate, 'player.buff(Innervate).any'},
 	
-	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff & tank.health <= tank2.health & tank2.exists' , 'tank'},
-	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank.health * .8 & tank2.exists' , 'tank2'},
 	--{ 'Lifebloom', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
 	--{ 'Lifebloom', '!buff(Lifebloom) & health < tank.health * .8' , 'tank2'},
 	
-	{ 'Lifebloom', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff & tank.health <= tank2.health & tank2.exists' , 'tank'},
-	{ 'Lifebloom', '!buff(Lifebloom) & health < tank.health * .8  & tank2.exists || !tank.buff & !tank2.buff & tank2.health < tank.health & tank2.exists' , 'tank2'},
+	-- Tank Maintenance
+	{ 'Lifebloom', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff' , 'tank'},
+	{ 'Lifebloom', '!buff(Lifebloom) & health < tank.health * .8  & tank2.exists || !tank.buff & !tank2.buff & tank2.health < tank.health' , 'tank2'},
+	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff' , 'tank'},
+	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank.health * .8 & tank2.exists' , 'tank2'},
 	
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
 	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
