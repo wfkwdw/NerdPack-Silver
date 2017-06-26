@@ -1,4 +1,7 @@
 local GUI = {  
+	--------------------------------
+	-- Generic
+	--------------------------------
 	{type = 'header', 	text = 'Generic', align = 'center'},
 	{type = 'spinner', 	text = 'Critical health%', 						key = 'ch', 	default = 30},
 	
@@ -35,9 +38,14 @@ local GUI = {
 
 local exeOnLoad = function()
 	print('|cffFACC2E Resto Druid Rotation loaded|r')
-	print('|cffFACC2E For Settings Right-Click the MasterToggle and go to Combat Routines Settings |r')
+	print('|cffFACC2E WIP |r')
 	print('|cffFACC2E Have a nice day!|r')
-	
+	NeP.Interface:AddToggle({
+		key = 'dps',
+		name = 'DPS',
+		text = 'DPS while healing',
+		icon = 'Interface\\Icons\\spell_holy_crusaderstrike',
+	})
 	NeP.Interface:AddToggle({
 		key = 'disp',
 		name = 'Dispell',
@@ -65,14 +73,20 @@ local dps = {
 
 local cooldowns = {
 	{ 'Innervate', 'player.mana <= 30'},
+	
+	-- Kara Healing Trinket
+	{ '#trinket1', 'xequipped(142158) & player.area(15,75).heal >= 3'},
 }
 
-local treeForm = {
+local encounters = {
 
+	-- Maiden of Virtue
+	{ 'Wild Growth', 'target.casting(Hammer of Creation)', 'target'},
+	{ 'Wild Growth', 'target.casting(Hammer of Obliteration)', 'target'},
 }
 
 local emergency = {
-	{ 'Swiftment', nil, 'loweset'},
+	{ 'Swiftmend', nil, 'loweset'},
 	{ 'Regrowth', nil, 'lowest'},
 }
 
@@ -105,8 +119,11 @@ local rejuvSpam = {
 }
 
 local innervate = {
+	-- Swiftmend
+	{'Swiftmend', 'lowest.health <= UI(lsm) & lowest.buff(Rejuvenation)', 'lowest'},
+
 	{ 'Rejuvenation', '!buff', 'tank'},
-	{ 'Rejuvenation', '!buff', 'tank2)'},
+	{ 'Rejuvenation', '!buff', 'tank2'},
 	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest'},
 	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest2'},
 	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest3'},
@@ -135,9 +152,14 @@ local innervate = {
 }
 
 local moving = {
-	{ 'Cenarion Ward', '!buff', 'tank'},
-	{ 'Cenarion Ward', '!buff', 'tank2'},
-	{ 'Lifebloom', 'tank.buff.duration <= 4.5', 'tank'},
+	{ 'Cenarion Ward', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
+	{ 'Cenarion Ward', '!buff(Lifebloom) & health < tank.health * .8' , 'tank2'},
+	{ 'Lifebloom', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
+	{ 'Lifebloom', '!buff(Lifebloom) & health < tank.health * .8' , 'tank2'},
+	
+	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank'},
+	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank2'},
+	{ 'Swiftmend', 'health <= UI(lsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'lowest'},
 	
 	{ rejuvSpam},
 	
@@ -147,17 +169,27 @@ local moving = {
 }
 
 local healing = {
-	{ 'Cenarion Ward', '!buff', 'tank'},
-	{ 'Cenarion Ward', '!buff', 'tank2'},
 	{ emergency, 'lowest.health <= UI(ch)'}, 
 	{ innervate, 'player.buff(Innervate).any'},
-	{ 'Lifebloom', 'tank.buff.duration <= 4.5 & tank.health >= UI(tsm) || !tank.buff', 'tank'},
+	
+	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff & tank.health <= tank2.health & tank2.exists' , 'tank'},
+	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank.health * .8 & tank2.exists' , 'tank2'},
+	--{ 'Lifebloom', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
+	--{ 'Lifebloom', '!buff(Lifebloom) & health < tank.health * .8' , 'tank2'},
+	
+	{ 'Lifebloom', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff & tank.health <= tank2.health & tank2.exists' , 'tank'},
+	{ 'Lifebloom', '!buff(Lifebloom) & health < tank.health * .8  & tank2.exists || !tank.buff & !tank2.buff & tank2.health < tank.health & tank2.exists' , 'tank2'},
 	
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
 	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
 	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50'}, 
 	
-	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lowest'},
+	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime & lowest.health <= UI(lrg)', 'lowest'},
+	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'tank'},
+	
+	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank'},
+	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank2'},
+	{ 'Swiftmend', 'health <= UI(lsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'lowest'},
 	
 	-- Rejuv
 	{ rejuvSpam},
@@ -178,18 +210,17 @@ local healing = {
 local inCombat = {
 	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	{ keybinds},
+	{ encounters},
 	{ '%dispelall', 'toggle(disp) & spell(Nature\'s Cure).cooldown = 0'},
 	{ cooldowns},
 	{ moving, 'player.moving'},
 	{ healing, '!player.moving'},
-	{ dps, 'target.enemy & target.health > 0'},
+	{ dps, 'target.enemy & target.health > 0 & toggle(dps)'},
 }
 
 local outCombat = {
-	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	{ keybinds},
-	{ rejuvSpam, '!buff(Eating)'},
-	--{ healing},
+	{ rejuvSpam, '!buff(Eating) & !buff(Cat Form)'},
 }
 
 NeP.CR:Add(105, {
