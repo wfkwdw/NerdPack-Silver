@@ -125,7 +125,7 @@ local innervate = {
 	-- Swiftmend
 	{'Swiftmend', 'lowest.health <= UI(lsm) & lowest.buff(Rejuvenation)', 'lowest'},
 
-	{ 'Rejuvenation', '!buff', 'tank'},
+	{ 'Rejuvenation', '!buff', 'tank1'},
 	{ 'Rejuvenation', '!buff', 'tank2'},
 	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest'},
 	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest2'},
@@ -138,7 +138,7 @@ local innervate = {
 	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest9'},
 	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest10'},
 	
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'tank'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'tank1'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'tank2'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest2'},
@@ -155,12 +155,12 @@ local innervate = {
 }
 
 local moving = {
-	{ 'Cenarion Ward', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
+	{ 'Cenarion Ward', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff' , 'tank'},
 	{ 'Cenarion Ward', '!buff(Lifebloom) & health < tank.health * .8' , 'tank2'},
-	{ 'Lifebloom', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
-	{ 'Lifebloom', '!buff(Lifebloom) & health < tank.health * .8' , 'tank2'},
+	{ 'Lifebloom', '!tank1.buff & { tank1.health < {tank2.health * 0.8} || !tank2.exists}', 'tank1'},
+	{ 'Lifebloom', '!tank2.buff &! { tank1.health < { tank2.health*0.8 }}', 'tank2'},
 	
-	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank'},
+	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank1'},
 	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank2'},
 	{ 'Swiftmend', 'health <= UI(lsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'lowest'},
 	
@@ -176,10 +176,13 @@ local healing = {
 	{ innervate, 'player.buff(Innervate).any'},
 	
 	-- Tank Maintenance ( add party check)
-	{ 'Lifebloom', '!buff & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
-	{ 'Lifebloom', '!buff & health < tank.health * .8' , 'tank2'},
-	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
-	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank.health * .8 & tank2.exists' , 'tank2'},
+	-- Lifebloom on the tank
+	{ 'Lifebloom', '{ tank1.buff.duration < 4.5 || tank2.buff.duration < 4.5 } & { tank1.health < tank2.health }', 'tank1'}, 
+	{ 'Lifebloom', '{ tank1.buff.duration < 4.5 || tank2.buff.duration < 4.5 } & { tank2.health < tank1.health }', 'tank2'}, 
+	{ 'Lifebloom', '!tank1.buff & { tank1.health < { tank2.health * 0.8} || !tank2.exists}', 'tank1'},
+	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health*0.8}}', 'tank2'},
+	{ 'Cenarion Ward', '{ tank1.health < tank2.health } || !tank2.exists}', 'tank1'}, 
+	{ 'Cenarion Ward', 'tank2.health < tank1.health }', 'tank2'},
 	
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
 	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
