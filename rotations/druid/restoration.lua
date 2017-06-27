@@ -23,6 +23,7 @@ local GUI = {
 	{type = 'spinner', 	text = 'Swiftmend', 							key = 'tsm', 	default = 90},
 	{type = 'spinner', 	text = 'Healing touch)', 						key = 'tht',	default = 90},
 	{type = 'spinner', 	text = 'Regrowth', 								key = 'trg', 	default = 60},
+	{type = 'spinner', 	text = 'Ironbark', 								key = 'ib', 	default = 25},
 	{type = 'ruler'}, {type = 'spacer'},
 	
 	--------------------------------
@@ -73,6 +74,8 @@ local dps = {
 
 local cooldowns = {
 	{ 'Innervate', 'player.mana <= 30'},
+	{ 'Ironbark', 'health <= UI(ib)', 'tank'},
+	{ 'Ironbark', 'health <= UI(ib)', 'tank2'},
 	
 	-- Kara Healing Trinket
 	{ '#trinket1', 'xequipped(142158) & player.area(15,75).heal >= 3'},
@@ -172,7 +175,7 @@ local healing = {
 	{ emergency, 'lowest.health <= UI(ch)'}, 
 	{ innervate, 'player.buff(Innervate).any'},
 	
-	-- Tank Maintenance
+	-- Tank Maintenance ( add party check)
 	{ 'Lifebloom', '!buff & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
 	{ 'Lifebloom', '!buff & health < tank.health * .8' , 'tank2'},
 	{ 'Cenarion Ward', '!buff(Cenarion Ward) & health < tank2.health * .8 || !tank2.exists & !buff' , 'tank'},
