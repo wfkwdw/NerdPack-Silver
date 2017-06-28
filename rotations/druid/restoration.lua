@@ -177,7 +177,7 @@ local healing = {
 	
 	-- Tank Maintenance ( add party check)
 	-- Lifebloom on the tank
-	{ 'Lifebloom', '{ tank1.buff.duration < 4.5 || tank2.buff.duration < 4.5 } & { tank1.health < tank2.health }', 'tank1'}, 
+	{ 'Lifebloom', '{ tank1.buff.duration < 4.5 || tank2.buff.duration < 4.5 } & { tank1.health < tank2.health } || tank1.buff.duration < 4.5 & !tank2.exists', 'tank1'}, 
 	{ 'Lifebloom', '{ tank1.buff.duration < 4.5 || tank2.buff.duration < 4.5 } & { tank2.health < tank1.health }', 'tank2'}, 
 	{ 'Lifebloom', '!tank1.buff & { tank1.health < { tank2.health * 0.8} || !tank2.exists}', 'tank1'},
 	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health*0.8}}', 'tank2'},
