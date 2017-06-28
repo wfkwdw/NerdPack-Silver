@@ -39,7 +39,7 @@ local GUI = {
 
 local exeOnLoad = function()
 	print('|cffFACC2E Resto Druid Rotation loaded|r')
-	print('|cffFACC2E WIP |r')
+	print('|cffFACC2E Lifebloom needs raid testing |r')
 	print('|cffFACC2E Have a nice day!|r')
 	NeP.Interface:AddToggle({
 		key  = 'dps',
@@ -84,8 +84,8 @@ local cooldowns = {
 local encounters = {
 
 	-- Maiden of Virtue
-	{ 'Wild Growth', 'target.casting(Hammer of Creation)', 'target'},
-	{ 'Wild Growth', 'target.casting(Hammer of Obliteration)', 'target'},
+	{ 'Wild Growth', ' target.casting(Hammer of Creation) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
+	{ 'Wild Growth', 'target.casting(Hammer of Obliteration) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
 }
 
 local emergency = {
@@ -94,7 +94,7 @@ local emergency = {
 }
 
 local rejuvSpam = {
-	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank'},
+	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank1'},
 	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank2)'},
 	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest'},
 	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest2'},
@@ -107,7 +107,7 @@ local rejuvSpam = {
 	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest9'},
 	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest10'},
 	
-	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'tank'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'tank1'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'tank2'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest2'},
@@ -151,14 +151,19 @@ local innervate = {
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest9'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest10'},
 	
-	{ 'Regrowth', nil, 'lowest'},
+	{ 'Regrowth', '!player.moving', 'lowest'},
 }
 
 local moving = {
-	{ 'Cenarion Ward', '!buff(Lifebloom) & health < tank2.health * .8 || !tank2.exists & !buff || !tank.buff & !tank2.buff' , 'tank'},
-	{ 'Cenarion Ward', '!buff(Lifebloom) & health < tank.health * .8' , 'tank2'},
-	{ 'Lifebloom', '!tank1.buff & { tank1.health < {tank2.health * 0.8} || !tank2.exists}', 'tank1'},
-	{ 'Lifebloom', '!tank2.buff &! { tank1.health < { tank2.health*0.8 }}', 'tank2'},
+	-- Lifebloom on the tank
+	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
+	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
+	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
+	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
+	{ 'Lifebloom', '!tank1.buff & { tank1.health < { tank2.health * 0.8} || !tank2.exists}', 'tank1'},
+	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health * 0.8}}', 'tank2'},
+	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'}, 
+	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
 	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank1'},
 	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank2'},
@@ -172,21 +177,23 @@ local moving = {
 }
 
 local healing = {
-	{ emergency, 'lowest.health <= UI(ch)'}, 
-	{ innervate, 'player.buff(Innervate).any'},
-	
-	-- Tank Maintenance ( add party check)
 	-- Lifebloom on the tank
-	{ 'Lifebloom', '{ tank1.buff.duration < 4.5 || tank2.buff.duration < 4.5 } & { tank1.health < tank2.health } || tank1.buff.duration < 4.5 & !tank2.exists', 'tank1'}, 
-	{ 'Lifebloom', '{ tank1.buff.duration < 4.5 || tank2.buff.duration < 4.5 } & { tank2.health < tank1.health }', 'tank2'}, 
+	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
+	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
+	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
+	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
 	{ 'Lifebloom', '!tank1.buff & { tank1.health < { tank2.health * 0.8} || !tank2.exists}', 'tank1'},
-	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health*0.8}}', 'tank2'},
-	{ 'Cenarion Ward', '{ tank1.health < tank2.health } || !tank2.exists}', 'tank1'}, 
-	{ 'Cenarion Ward', 'tank2.health < tank1.health }', 'tank2'},
+	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health * 0.8}}', 'tank2'},
+	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'}, 
+	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
+	-- AOE
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
 	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
 	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50'}, 
+	
+	{ emergency, 'lowest.health <= UI(ch)'}, 
+	{ innervate, 'player.buff(Innervate).any'},
 	
 	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime & lowest.health <= UI(lrg)', 'lowest'},
 	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'tank'},
@@ -198,17 +205,19 @@ local healing = {
 	-- Rejuv
 	{ rejuvSpam},
 	
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank'},
+	{ 'Flourish', 'talent(7,3) & lowest6.buff(Rejuvenation) & lowest6.health <= 60'},
+	
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
 	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 	
-	{ 'Regrowth', 'tank.health <= UI(trg)', 'tank'},
-	{ 'Regrowth', 'tank2.health <= UI(trg)', 'tank2'},
-	{ 'Regrowth', 'lowest.health <= UI(lrg)', 'lowest'},
+	{ 'Regrowth', 'health <= UI(trg)', 'tank'},
+	{ 'Regrowth', 'health <= UI(trg)', 'tank2'},
+	{ 'Regrowth', 'health <= UI(lrg)', 'lowest'},
 	
-	{ 'Healing Touch', 'tank.health <= UI(tht)', 'tank'},
-	{ 'Healing Touch', 'tank2.health <= UI(tht)', 'tank2'},
-	{ 'Healing Touch', 'lowest.health <= UI(lht)', 'lowest'},
+	{ 'Healing Touch', 'health <= UI(tht)', 'tank1'},
+	{ 'Healing Touch', 'health <= UI(tht)', 'tank2'},
+	{ 'Healing Touch', 'health <= UI(lht)', 'lowest'},
 }
 
 local inCombat = {
