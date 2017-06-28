@@ -1,3 +1,6 @@
+-- Contact Silver9172 on the Nerdpack Discord with any issues
+-- Updated to patch 7.2.5, needs raid testing and feedback
+
 local GUI = {  
 	--------------------------------
 	-- Generic
@@ -38,8 +41,9 @@ local GUI = {
 }
 
 local exeOnLoad = function()
-	print('|cffFACC2E Resto Druid Rotation loaded|r')
-	print('|cffFACC2E Lifebloom needs raid testing |r')
+	print('|cffFACC2E [Silver] Druid - Restoration loaded|r')
+	print('|cffFACC2E Contact Silver9172 on the Nerdpack Discord with any issues |r')
+	print('|cffFACC2E Updated to patch 7.2.5, needs raid testing and feedback |r')
 	print('|cffFACC2E Have a nice day!|r')
 	NeP.Interface:AddToggle({
 		key  = 'dps',
@@ -189,8 +193,8 @@ local healing = {
 	
 	-- AOE
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
-	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)'}, 
-	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50'}, 
+	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)', 'player'}, 
+	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50', 'player'}, 
 	
 	{ emergency, 'lowest.health <= UI(ch)'}, 
 	{ innervate, 'player.buff(Innervate).any'},
@@ -205,7 +209,7 @@ local healing = {
 	-- Rejuv
 	{ rejuvSpam},
 	
-	{ 'Flourish', 'talent(7,3) & lowest6.buff(Rejuvenation) & lowest6.health <= 60'},
+	{ 'Flourish', 'talent(7,3) & lowest6.buff(Rejuvenation) & lowest6.health <= 50', 'player'},
 	
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
