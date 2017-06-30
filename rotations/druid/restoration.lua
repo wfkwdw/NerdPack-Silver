@@ -61,7 +61,7 @@ end
 
 local keybinds = {
 	{ '%pause', 'keybind(alt)'},
-	{ 'Efflorescence', 'keybind(control)', 'cursor.ground'},
+	{ 'Efflorescence', 'keybind(control) & !player.lastcast', 'cursor.ground'},
 }
 
 local potions = {
@@ -73,19 +73,21 @@ local potions = {
 local dps = {
 	{ 'Moonfire', '!debuff & player.mana >= 30'},
 	{ 'Sunfire', '!debuff & player.mana >= 30'},
-	{ 'Solar Wrath'},
+	{ 'Solar Wrath', '!player.moving'},
 }
 
 local cooldowns = {
-	{ 'Innervate', 'player.mana <= 30'},
+	{ 'Innervate', 'player.mana <= 75'},
 	{ 'Ironbark', 'health <= UI(ib)', 'tank'},
 	{ 'Ironbark', 'health <= UI(ib)', 'tank2'},
+	{ 'Barkskin', 'health <= 60', 'player'},
 	
 	-- Kara Healing Trinket
 	{ '#trinket1', 'xequipped(142158) & player.area(15,75).heal >= 3'},
 }
 
 local encounters = {
+	
 
 	-- Maiden of Virtue
 	{ 'Wild Growth', ' target.casting(Hammer of Creation) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
@@ -126,21 +128,22 @@ local rejuvSpam = {
 }
 
 local innervate = {
-	-- Swiftmend
-	{'Swiftmend', 'lowest.health <= UI(lsm) & lowest.buff(Rejuvenation)', 'lowest'},
+	{ 'Wild Growth', 'toggle(AOE) & !player.moving', 'lowest'},
+	{ 'Essence of G\'Hanir', 'player.area(40,85).heal >= 3 & lastcast(Wild Growth)', 'player'}, 
+	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth)', 'player'}, 
 
 	{ 'Rejuvenation', '!buff', 'tank1'},
 	{ 'Rejuvenation', '!buff', 'tank2'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest2'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest3'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest4'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest5'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest6'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest7'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest8'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest9'},
-	{ 'Rejuvenation', 'health <= 95 & !buff', 'lowest10'},
+	{ 'Rejuvenation', '!buff', 'lowest'},
+	{ 'Rejuvenation', '!buff', 'lowest2'},
+	{ 'Rejuvenation', '!buff', 'lowest3'},
+	{ 'Rejuvenation', '!buff', 'lowest4'},
+	{ 'Rejuvenation', '!buff', 'lowest5'},
+	{ 'Rejuvenation', '!buff', 'lowest6'},
+	{ 'Rejuvenation', '!buff', 'lowest7'},
+	{ 'Rejuvenation', '!buff', 'lowest8'},
+	{ 'Rejuvenation', '!buff', 'lowest9'},
+	{ 'Rejuvenation', '!buff', 'lowest10'},
 	
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'tank1'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'tank2'},
@@ -158,62 +161,59 @@ local innervate = {
 	{ 'Regrowth', '!player.moving', 'lowest'},
 }
 
-local moving = {
-	-- Lifebloom on the tank
-	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
-	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
-	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
-	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
+local lifebloom = {
+	-- DOESNT WORK 100%. NEEDS TO REFRESH WHEN UNDER 4.5.
+	{ 'Lifebloom', '{ tank1.buff(Lifebloom).duration < 4.5 & tank1.buff(Lifebloom) } & {{ tank1.health <= tank2.health } || !tank2.exists }', 'tank1'}, 
+	{ 'Lifebloom', '{ tank2.buff(Lifebloom).duration < 4.5 & tank2.buff(Lifebloom) } & { tank1.health <= tank2.health }', 'tank1'}, 
+	{ 'Lifebloom', '{ tank1.buff(Lifebloom).duration < 4.5 & tank1.buff(Lifebloom) } & { tank2.health < tank1.health }', 'tank2'}, 
+	{ 'Lifebloom', '{ tank2.buff(Lifebloom).duration < 4.5 & tank2.buff(Lifebloom) } & { tank2.health < tank1.health }', 'tank2'}, 
+	
+	-- Working raid code
+	{ 'Lifebloom', '!tank1.buff & !tank2.buff & { tank1.health <= tank2.health }', 'tank1'},
+	{ 'Lifebloom', '!tank1.buff & !tank2.buff & { tank2.health < tank1.health }', 'tank2'},
 	{ 'Lifebloom', '!tank1.buff & { tank1.health < { tank2.health * 0.8} || !tank2.exists}', 'tank1'},
-	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health * 0.8}}', 'tank2'},
+	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health * 0.8 }}', 'tank2'},
+}
+
+local moving = {
+	{ lifebloom}, 	
 	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'}, 
 	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
-	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank1'},
-	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(lsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'lowest'},
-	
-	{ rejuvSpam},
-	
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank'},
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
 	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
+	
+	{ rejuvSpam},
 }
 
 local healing = {
-	-- Lifebloom on the tank
-	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
-	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank1.health < tank2.health } || !tank2.exists', 'tank1'}, 
-	{ 'Lifebloom', 'tank1.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
-	{ 'Lifebloom', 'tank2.buff.duration < 4.5 & { tank2.health < tank1.health } || !tank2.exists', 'tank2'}, 
-	{ 'Lifebloom', '!tank1.buff & { tank1.health < { tank2.health * 0.8} || !tank2.exists}', 'tank1'},
-	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health * 0.8}}', 'tank2'},
+	{ lifebloom}, 
+	
 	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'}, 
 	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
-	-- AOE
-	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
-	{ 'Essence of G\'Hanir', 'lowest.area(30,75).heal >= 3 & lastcast(Wild Growth)', 'player'}, 
-	{ 'Flourish', 'talent(7,3) & player.lastcast(Wild Growth) & lowest.health <= 50', 'player'}, 
-	
-	{ emergency, 'lowest.health <= UI(ch)'}, 
 	{ innervate, 'player.buff(Innervate).any'},
 	
-	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime & lowest.health <= UI(lrg)', 'lowest'},
-	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'tank'},
+	{ 'Rejuvenation', '!buff', 'lnbuff(Rejuvenation)'},
 	
-	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank'},
-	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(lsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination))}', 'lowest'},
+	-- AOE
+	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
+	{ 'Essence of G\'Hanir', 'player.area(40,85).heal >= 3 & lastcast(Wild Growth)', 'player'}, 
+	{ 'Flourish', 'talent(7,3) & { player.lastcast(Wild Growth) || player.lastcast(Essence of G\'Hanir) }', 'player'}, 
+	
+	{ emergency, 'lowest.health <= UI(ch)'}, 
+	
+	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lowest'},
+	
+	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination)) || buff(Regrowth) }', 'tank1'},
+	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination)) || buff(Regrowth) }', 'tank2'},
+	{ 'Swiftmend', 'health <= UI(lsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination)) || buff(Regrowth) }', 'lowest'},
 	
 	-- Rejuv
 	{ rejuvSpam},
 	
 	{ 'Flourish', 'talent(7,3) & lowest6.buff(Rejuvenation) & lowest6.health <= 50', 'player'},
-	
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 	
 	{ 'Regrowth', 'health <= UI(trg)', 'tank'},
 	{ 'Regrowth', 'health <= UI(trg)', 'tank2'},
@@ -237,6 +237,7 @@ local inCombat = {
 
 local outCombat = {
 	{ keybinds},
+	{ lifebloom}, 
 	{ rejuvSpam, '!buff(Eating) & !buff(Cat Form)'},
 }
 
