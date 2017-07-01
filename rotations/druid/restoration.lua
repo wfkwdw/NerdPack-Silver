@@ -162,17 +162,21 @@ local innervate = {
 }
 
 local lifebloom = {
-	-- DOESNT WORK 100%. NEEDS TO REFRESH WHEN UNDER 4.5.
-	{ 'Lifebloom', '{ tank1.buff(Lifebloom).duration < 4.5 & tank1.buff(Lifebloom) } & {{ tank1.health <= tank2.health } || !tank2.exists }', 'tank1'}, 
-	{ 'Lifebloom', '{ tank2.buff(Lifebloom).duration < 4.5 & tank2.buff(Lifebloom) } & { tank1.health <= tank2.health }', 'tank1'}, 
-	{ 'Lifebloom', '{ tank1.buff(Lifebloom).duration < 4.5 & tank1.buff(Lifebloom) } & { tank2.health < tank1.health }', 'tank2'}, 
-	{ 'Lifebloom', '{ tank2.buff(Lifebloom).duration < 4.5 & tank2.buff(Lifebloom) } & { tank2.health < tank1.health }', 'tank2'}, 
-	
-	-- Working raid code
-	{ 'Lifebloom', '!tank1.buff & !tank2.buff & { tank1.health <= tank2.health }', 'tank1'},
-	{ 'Lifebloom', '!tank1.buff & !tank2.buff & { tank2.health < tank1.health }', 'tank2'},
-	{ 'Lifebloom', '!tank1.buff & { tank1.health < { tank2.health * 0.8} || !tank2.exists}', 'tank1'},
-	{ 'Lifebloom', '!tank2.buff & { tank2.health < { tank1.health * 0.8 }}', 'tank2'},
+	-- Solo
+	{ 'Lifebloom', 'player.buff.duration <= 4.5 & { partycheck = 1 || { partycheck = 2 & !tank1.exists } || { partycheck = 3 & !tank1.exists }}', 'player'},
+	-- 5 man
+	{ 'Lifebloom', 'tank.buff.duration <= 4.5 & partycheck = 2', 'tank'},
+	-- Raid
+	-- Only one tank
+	{ 'Lifebloom', 'tank.buff.duration <= 4.5 & partycheck = 3 & !tank2.exists', 'tank'},
+	-- If one tank is 20% lower than the other, swap LB
+	{ 'Lifebloom', 'partycheck = 3 & { !tank1.buff & { tank1.health < { tank2.health * 0.8 }}}', 'tank1'},
+	{ 'Lifebloom', 'partycheck = 3 & { !tank2.buff & { tank2.health < { tank1.health * 0.8 }}}', 'tank2'},
+	-- If neither tank has life bloom, apply it to the one with lower health
+	{ 'Lifebloom', 'partycheck = 3 & !tank1.buff & !tank2.buff', 'lowest(Tank)'},
+	-- If either tank is at 4.5 seconds or lower, reapply LB on the tank with the lower health
+	{ 'Lifebloom', 'partycheck = 3 & tank1.buff.duration <= 4.5 & !tank2.buff', 'lowest(Tank)'},
+	{ 'Lifebloom', 'partycheck = 3 & tank2.buff.duration <= 4.5 & !tank1.buff', 'lowest(Tank)'},
 }
 
 local moving = {
@@ -188,7 +192,7 @@ local moving = {
 }
 
 local healing = {
-	{ lifebloom}, 
+	{ lifebloom }, 
 	
 	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'}, 
 	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
@@ -237,8 +241,8 @@ local inCombat = {
 
 local outCombat = {
 	{ keybinds},
-	{ lifebloom}, 
-	{ rejuvSpam, '!buff(Eating) & !buff(Cat Form)'},
+	{ lifebloom, '!buff(Cat Form)'}, 
+	{ rejuvSpam, '!buff(Cat Form)'},
 }
 
 NeP.CR:Add(105, {
