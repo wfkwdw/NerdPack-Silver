@@ -294,5 +294,15 @@ NeP.DSL:Register('variable.pooling_for_chaos_strike', function()
 	return false
 end)
 
+---------------------------------------
+-------------- Warrior ----------------
+---------------------------------------
 
-
+NeP.DSL:Register('ignorepain', function ()
+    local name,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,value = UnitBuff("player", "Ignore Pain")
+    if name then
+		print(value)
+        return value
+    end
+	return 0
+end)

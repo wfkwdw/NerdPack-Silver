@@ -90,7 +90,7 @@ local encounters = {
 	
 
 	-- Maiden of Virtue
-	{ 'Wild Growth', ' target.casting(Hammer of Creation) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
+	{ 'Wild Growth', 'target.casting(Hammer of Creation) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
 	{ 'Wild Growth', 'target.casting(Hammer of Obliteration) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
 }
 
@@ -173,15 +173,16 @@ local lifebloom = {
 	{ 'Lifebloom', 'partycheck = 3 & { !tank1.buff & { tank1.health < { tank2.health * 0.8 }}}', 'tank1'},
 	{ 'Lifebloom', 'partycheck = 3 & { !tank2.buff & { tank2.health < { tank1.health * 0.8 }}}', 'tank2'},
 	-- If neither tank has life bloom, apply it to the one with lower health
-	{ 'Lifebloom', 'partycheck = 3 & !tank1.buff & !tank2.buff', 'lowest(Tank)'},
+	{ 'Lifebloom', 'partycheck = 3 & {{ !tank1.buff & !tank2.buff & { tank1.health <= tank2.health }}}', 'tank1'},
+	{ 'Lifebloom', 'partycheck = 3 & {{ !tank1.buff & !tank2.buff & { tank2.health < tank1.health }}}', 'tank2'},
 	-- If either tank is at 4.5 seconds or lower, reapply LB on the tank with the lower health
-	{ 'Lifebloom', 'partycheck = 3 & tank1.buff.duration <= 4.5 & !tank2.buff', 'lowest(Tank)'},
-	{ 'Lifebloom', 'partycheck = 3 & tank2.buff.duration <= 4.5 & !tank1.buff', 'lowest(Tank)'},
+	{ 'Lifebloom', 'partycheck = 3 & tank1.buff.duration <= 4.5 & !tank2.buff & tank1.health <= tank2.health', 'tank1'},
+	{ 'Lifebloom', 'partycheck = 3 & tank2.buff.duration <= 4.5 & !tank1.buff & tank2.health < tank1.health', 'tank2'},
 }
 
 local moving = {
-	{ lifebloom}, 	
-	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'}, 
+	{ lifebloom},
+	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'},
 	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
@@ -194,25 +195,23 @@ local moving = {
 local healing = {
 	{ lifebloom }, 
 	
-	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'}, 
+	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'},
 	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
-	{ innervate, 'player.buff(Innervate).any'},
-	
-	{ 'Rejuvenation', '!buff', 'lnbuff(Rejuvenation)'},
+	{ innervate, 'player.buff(Innervate).any & !player.spell(Wild Growth).cooldown'},
 	
 	-- AOE
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
-	{ 'Essence of G\'Hanir', 'player.area(40,85).heal >= 3 & lastcast(Wild Growth)', 'player'}, 
-	{ 'Flourish', 'talent(7,3) & { player.lastcast(Wild Growth) || player.lastcast(Essence of G\'Hanir) }', 'player'}, 
+	{ 'Essence of G\'Hanir', 'player.area(40,85).heal >= 3 & lastcast(Wild Growth)', 'player'},
+	{ 'Flourish', 'talent(7,3) & { player.lastcast(Wild Growth) || player.lastcast(Essence of G\'Hanir) }', 'player'},
 	
 	{ emergency, 'lowest.health <= UI(ch)'}, 
 	
 	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lowest'},
 	
-	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination)) || buff(Regrowth) }', 'tank1'},
-	{ 'Swiftmend', 'health <= UI(tsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination)) || buff(Regrowth) }', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(lsm) & { buff(Rejuvenation) || buff(Rejuvenation (Germination)) || buff(Regrowth) }', 'lowest'},
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
+	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 	
 	-- Rejuv
 	{ rejuvSpam},

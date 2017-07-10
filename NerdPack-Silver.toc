@@ -28,3 +28,4 @@ rotations\warlock\affliction.lua
 rotations\demonhunter\Havoc.lua
 
 rotations\mage\frost.lua
+rotations\warrior\protection.lua

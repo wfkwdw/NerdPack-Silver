@@ -126,6 +126,7 @@ local encounters = {
 
 local aoeHealing = {
 	{ 'Beacon of Virtue', 'lowestp.area(30,95).heal >= 3 & talent(7,3)'},
+	{ 'Light of Dawn', 'player.lastcast(Light of Dawn)'},
 	{ 'Rule of Law', 'area(22,90).heal.infront >= 3 & !player.buff & spell(Light of Dawn).cooldown = 0'},
 	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3 & player.buff(Rule of Law)'},
 	{ 'Light of Dawn', 'area(15,90).heal.infront >= 3'},
