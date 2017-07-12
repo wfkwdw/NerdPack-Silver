@@ -42,6 +42,40 @@ NeP.DSL:Register('gcd.max', function()
     return NeP.DSL:Get('gcd')()
 end)
 
+-- Need enemy last cast event
+
+local castingEventSpellsAOE = { 
+	-- Testing
+	'Hearthstone',
+---------------------------------------
+--------- Tomb of Sargeras ------------
+---------------------------------------
+	-- Demonic Inquisition
+	'Anguished Outburst',
+	
+	-- Harjatan
+	'Unchecked Rage',
+	
+	-- The Desolate Host
+	'Sundering Doom',
+	
+	-- Maiden of Vigilance
+	'Hammer of Creation', 
+	'Hammer of Obliteration',
+	
+	-- Fallen Avatar 
+	'Sear',
+	
+	-- Kil'jaeden
+	'Hopelessness',
+}
+
+NeP.DSL:Register('castingeventAOE', function()
+    for i=1, #castingEventSpells do
+        if NeP.DSL:Get("casting")("target", castingEventSpells[i]) then return true end
+    end
+end)
+
 ---------------------------------------
 ---------------- Raid -----------------
 ---------------------------------------

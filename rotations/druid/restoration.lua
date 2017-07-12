@@ -7,6 +7,7 @@ local GUI = {
 	--------------------------------
 	{type = 'header', 	text = 'Generic', align = 'center'},
 	{type = 'spinner', 	text = 'Critical health%', 						key = 'ch', 	default = 30},
+	{type = 'spinner', 	text = 'Mana Restore', 							key = 'P_MR', 	default = 20},
 	
 	--------------------------------
 	-- Toggles
@@ -87,11 +88,7 @@ local cooldowns = {
 }
 
 local encounters = {
-	
-
-	-- Maiden of Virtue
-	{ 'Wild Growth', 'target.casting(Hammer of Creation) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
-	{ 'Wild Growth', 'target.casting(Hammer of Obliteration) & !player.moving & { target.casting.delta < player.spell(Wild Growth).casttime }', 'target'},
+	{ '!Wild Growth', 'castingeventAOE & !player.moving & casting.delta < player.spell(Wild Growth).casttime', 'target'},
 }
 
 local emergency = {
@@ -125,6 +122,34 @@ local rejuvSpam = {
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest8'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest9'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'lowest10'},
+}
+
+local rejuvSpamLowMana = {
+	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank1'},
+	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank2)'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest2'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest3'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest4'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest5'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest6'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest7'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest8'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest9'},
+	{ 'Rejuvenation', 'health <= UI(lrejuv) / 2 & !buff', 'lowest10'},
+	
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'tank1'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) & !buff(Rejuvenation (Germination))', 'tank2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest2'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest3'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest4'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest5'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest6'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest7'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest8'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest9'},
+	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= UI(lgerm) / 2 & !buff(Rejuvenation (Germination))', 'lowest10'},
 }
 
 local innervate = {
@@ -189,7 +214,9 @@ local moving = {
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
 	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 	
-	{ rejuvSpam},
+	-- Rejuv
+	{ rejuvSpamLowMana, 'player.mana < UI(P_MR)'},
+	{ rejuvSpam, 'player.mana >= UI(P_MR)'},
 }
 
 local healing = {
@@ -201,6 +228,7 @@ local healing = {
 	{ innervate, 'player.buff(Innervate).any & !player.spell(Wild Growth).cooldown'},
 	
 	-- AOE
+	{ 'Efflorescence', 'keybind(shift)&totem(Efflorescence).duration <25', 'cursor.ground'},
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
 	{ 'Essence of G\'Hanir', 'player.area(40,85).heal >= 3 & lastcast(Wild Growth)', 'player'},
 	{ 'Flourish', 'talent(7,3) & { player.lastcast(Wild Growth) || player.lastcast(Essence of G\'Hanir) }', 'player'},
@@ -214,7 +242,8 @@ local healing = {
 	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 	
 	-- Rejuv
-	{ rejuvSpam},
+	{ rejuvSpamLowMana, 'player.mana < UI(P_MR)'},
+	{ rejuvSpam, 'player.mana >= UI(P_MR)'},
 	
 	{ 'Flourish', 'talent(7,3) & lowest6.buff(Rejuvenation) & lowest6.health <= 50', 'player'},
 	
@@ -229,6 +258,7 @@ local healing = {
 
 local inCombat = {
 	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
+	--{ 'Rejuvenation', nil, 'lnbuff(Rejuvenation)'},
 	{ keybinds},
 	{ encounters},
 	{ '%dispelall', 'toggle(disp) & spell(Nature\'s Cure).cooldown = 0'},
@@ -242,6 +272,8 @@ local outCombat = {
 	{ keybinds},
 	{ lifebloom, '!buff(Cat Form)'}, 
 	{ rejuvSpam, '!buff(Cat Form)'},
+	--{ encounters}, -- Testing
+	--{ 'Rejuvenation', nil, 'lnbuff(Rejuvenation)'},
 }
 
 NeP.CR:Add(105, {
