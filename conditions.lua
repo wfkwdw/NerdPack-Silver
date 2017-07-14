@@ -71,8 +71,8 @@ local castingEventSpellsAOE = {
 }
 
 NeP.DSL:Register('castingeventAOE', function()
-    for i=1, #castingEventSpells do
-        if NeP.DSL:Get("casting")("target", castingEventSpells[i]) then return true end
+    for i=1, #castingEventSpellsAOE do
+        if NeP.DSL:Get("casting")("target", castingEventSpellsAOE[i]) then return true end
     end
 end)
 

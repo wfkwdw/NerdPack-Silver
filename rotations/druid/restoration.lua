@@ -63,11 +63,12 @@ end
 local keybinds = {
 	{ '%pause', 'keybind(alt)'},
 	{ 'Efflorescence', 'keybind(control) & !player.lastcast', 'cursor.ground'},
+	{ 'Ursol\'s Vortex', 'keybind(shift) & !player.lastcast', 'cursor.ground'},
 }
 
 local potions = {
 	{ '#127834', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'}, -- Health Pot
-	{ '#Healthstone', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'},
+	{ '#5512', 'UI(P_HP_check) & player.health <= UI(P_HP_spin)'}, -- Healthstone
 	{ '#127835', 'UI(P_MP_check) & player.mana <= UI(P_MP_spin)'}, -- Mana Pot
 }
 
@@ -78,7 +79,7 @@ local dps = {
 }
 
 local cooldowns = {
-	{ 'Innervate', 'player.mana <= 75'},
+	{ 'Innervate', 'player.mana <= 65'},
 	{ 'Ironbark', 'health <= UI(ib)', 'tank'},
 	{ 'Ironbark', 'health <= UI(ib)', 'tank2'},
 	{ 'Barkskin', 'health <= 60', 'player'},
@@ -89,6 +90,7 @@ local cooldowns = {
 
 local encounters = {
 	{ '!Wild Growth', 'castingeventAOE & !player.moving & casting.delta < player.spell(Wild Growth).casttime', 'target'},
+	
 }
 
 local emergency = {
@@ -228,14 +230,14 @@ local healing = {
 	{ innervate, 'player.buff(Innervate).any & !player.spell(Wild Growth).cooldown'},
 	
 	-- AOE
-	{ 'Efflorescence', 'keybind(shift)&totem(Efflorescence).duration <25', 'cursor.ground'},
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
 	{ 'Essence of G\'Hanir', 'player.area(40,85).heal >= 3 & lastcast(Wild Growth)', 'player'},
 	{ 'Flourish', 'talent(7,3) & { player.lastcast(Wild Growth) || player.lastcast(Essence of G\'Hanir) }', 'player'},
 	
 	{ emergency, 'lowest.health <= UI(ch)'}, 
 	
-	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lowest'},
+	{ 'Regrowth', 'health <= UI(lrg) & player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lowest'},
+	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lnbuff(Regrowth)'},
 	
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
 	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
@@ -274,6 +276,7 @@ local outCombat = {
 	{ rejuvSpam, '!buff(Cat Form)'},
 	--{ encounters}, -- Testing
 	--{ 'Rejuvenation', nil, 'lnbuff(Rejuvenation)'},
+	--{ 'Regrowth', nil, 'lnbuff(Regrowth)'},
 }
 
 NeP.CR:Add(105, {
