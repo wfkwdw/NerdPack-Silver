@@ -92,6 +92,51 @@ NeP.DSL:Register('partycheck', function()
 end)
 
 ---------------------------------------
+---------------- Druid ----------------
+---------------------------------------
+
+NeP.DSL:Register('hots', function()
+	local rejuv = NeP.DSL:Get('buff')('lowest','Rejuvenation')
+	local germ = UnitBuff('target', 'Rejuvenation (Germination)')
+	local springBlossems = UnitBuff('target', 'Spring Blossems')
+	local regrowth = UnitBuff('target', 'Regrowth')
+	local wildGrowth = UnitBuff('target', 'Wild Growth')
+	local lifebloom = NeP.DSL:Get('buff')('lowest','Lifebloom')
+	local hotCount = 0
+	if rejuv then
+		hotCount = hotCount + 1
+			else
+		hotCount = hotCount
+	end
+	if germ then
+		hotCount = hotCount + 1
+			else
+		hotCount = hotCount
+	end
+	if springBlossems then
+		hotCount = hotCount + 1
+			else
+		hotCount = hotCount
+	end
+	if regrowth then
+		hotCount = hotCount + 1
+			else
+		hotCount = hotCount
+	end
+	if wildGrowth then
+		hotCount = hotCount + 1
+			else
+		hotCount = hotCount
+	end
+	if lifebloom then
+		hotCount = hotCount + 1
+			else
+		hotCount = hotCount
+	end
+	return hotCount
+end)
+
+---------------------------------------
 ---------------- Rogue ----------------
 ---------------------------------------
 
@@ -340,3 +385,46 @@ NeP.DSL:Register('ignorepain', function ()
     end
 	return 0
 end)
+
+---------------------------------------
+-------------- Warlock ----------------
+---------------------------------------
+
+NeP.DSL:Register('unstableaffliction', function ()
+    local count = 0
+    
+    for i = 1, 40, 1 do
+        
+        if (UnitAura("target", i, "PLAYER|HARMFUL") == "Unstable Affliction") then
+            count = count + 1
+        end
+        
+    end
+	
+	print('Unstable Afflictions: '..count)
+	return count
+end)
+
+---------------------------------------
+-------------- Hunter -----------------
+---------------------------------------
+NeP.DSL:Register('aimedshotwindow', function ()
+	if NeP.DSL:Get('debuff.duration')('target', 'Vulnerable') > NeP.DSL:Get('spell.casttime')('player', 'Aimed Shot') then
+		print('True Mother Fucker')
+		return true
+		else return false
+	end
+end)
+
+--actions+=/variable,name=pooling_for_piercing,value=talent.piercing_shot.enabled&cooldown.piercing_shot.remains<5&lowest_vuln_within.5>0&lowest_vuln_within.5>cooldown.piercing_shot.remains&(buff.trueshot.down|spell_targets=1)
+--waiting_for_sentinel,value=talent.sentinel.enabled&(buff.marking_targets.up|buff.trueshot.up)&!cooldown.sentinel.up&((cooldown.sentinel.remains>54&cooldown.sentinel.remains<(54+gcd.max))|(cooldown.sentinel.remains>48&cooldown.sentinel.remains<(48+gcd.max))|(cooldown.sentinel.remains>42&cooldown.sentinel.remains<(42+gcd.max)))
+
+--actions.patient_sniper=variable,name=vuln_window,op=setif,value=cooldown.sidewinders.full_recharge_time,value_else=debuff.vulnerability.remains,condition=talent.sidewinders.enabled&cooldown.sidewinders.full_recharge_time<variable.vuln_window
+--# Determine the number of Aimed Shot casts that are possible according to available focus and remaining Vulnerable duration.
+--actions.patient_sniper+=/variable,name=vuln_aim_casts,op=set,value=floor(variable.vuln_window%action.aimed_shot.execute_time)
+NeP.DSL:Register('vuln_aim-casts', function ()
+	
+end)
+--actions.patient_sniper+=/variable,name=vuln_aim_casts,op1=set,value=floor((focus+action.aimed_shot.cast_regen*(variable.vuln_aim_casts-1))%action.aimed_shot.cost),if=variable.vuln_aim_casts>0&variable.vuln_aim_casts>floor((focus+action.aimed_shot.cast_regen*(variable.vuln_aim_casts-1))%action.aimed_shot.cost)
+--actions.patient_sniper+=/variable,name=can_gcd,value=variable.vuln_window<action.aimed_shot.cast_time|variable.vuln_window>variable.vuln_aim_casts*action.aimed_shot.execute_time+gcd.max+0.1
+

@@ -79,7 +79,7 @@ local dps = {
 }
 
 local cooldowns = {
-	{ 'Innervate', 'player.mana <= 65'},
+	{ 'Innervate', 'player.mana <= 65 & !player.spell(Wild Growth).cooldown'},
 	{ 'Ironbark', 'health <= UI(ib)', 'tank'},
 	{ 'Ironbark', 'health <= UI(ib)', 'tank2'},
 	{ 'Barkskin', 'health <= 60', 'player'},
@@ -90,7 +90,6 @@ local cooldowns = {
 
 local encounters = {
 	{ '!Wild Growth', 'castingeventAOE & !player.moving & casting.delta < player.spell(Wild Growth).casttime', 'target'},
-	
 }
 
 local emergency = {
@@ -185,7 +184,8 @@ local innervate = {
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest9'},
 	{ 'Rejuvenation', 'talent(6,3) & buff(Rejuvenation) & health <= 85 & !buff(Rejuvenation (Germination))', 'lowest10'},
 	
-	{ 'Regrowth', '!player.moving', 'lowest'},
+	{ 'Regrowth', 'health <= UI(lrg) & !player.moving', 'lowest'},
+	{ 'Regrowth', '!player.moving', 'lnbuff(Regrowth)'},
 }
 
 local lifebloom = {
@@ -212,13 +212,13 @@ local moving = {
 	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'},
 	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
-	
 	-- Rejuv
 	{ rejuvSpamLowMana, 'player.mana < UI(P_MR)'},
 	{ rejuvSpam, 'player.mana >= UI(P_MR)'},
+	
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
+	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 }
 
 local healing = {
@@ -227,7 +227,7 @@ local healing = {
 	{ 'Cenarion Ward', '{ tank1.health <= tank2.health } || !tank2.exists}', 'tank1'},
 	{ 'Cenarion Ward', '{ tank2.health < tank1.health }', 'tank2'},
 	
-	{ innervate, 'player.buff(Innervate).any & !player.spell(Wild Growth).cooldown'},
+	{ innervate, 'player.buff(Innervate).any'},
 	
 	-- AOE
 	{ 'Wild Growth', 'player.area(40,85).heal >= 3 & toggle(AOE)', 'lowest'},
@@ -239,13 +239,13 @@ local healing = {
 	{ 'Regrowth', 'health <= UI(lrg) & player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lowest'},
 	{ 'Regrowth', 'player.buff(Clearcasting).duration >= player.spell(Regrowth).casttime', 'lnbuff(Regrowth)'},
 	
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
-	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
-	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
-	
 	-- Rejuv
 	{ rejuvSpamLowMana, 'player.mana < UI(P_MR)'},
 	{ rejuvSpam, 'player.mana >= UI(P_MR)'},
+	
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank1'},
+	{ 'Swiftmend', 'health <= UI(tsm)', 'tank2'},
+	{ 'Swiftmend', 'health <= UI(lsm)', 'lowest'},
 	
 	{ 'Flourish', 'talent(7,3) & lowest6.buff(Rejuvenation) & lowest6.health <= 50', 'player'},
 	
@@ -261,7 +261,7 @@ local healing = {
 local inCombat = {
 	{ '/cancelaura Cat Form', 'buff(Cat Form)', 'player'},
 	--{ 'Rejuvenation', nil, 'lnbuff(Rejuvenation)'},
-	{ keybinds},
+	{ keybinds, 'keybind(shift) || keybind(control) || keybind(alt)'},
 	{ encounters},
 	{ '%dispelall', 'toggle(disp) & spell(Nature\'s Cure).cooldown = 0'},
 	{ cooldowns},
@@ -271,7 +271,7 @@ local inCombat = {
 }
 
 local outCombat = {
-	{ keybinds},
+	{ keybinds, 'keybind(shift) || keybind(control) || keybind(alt)'},
 	{ lifebloom, '!buff(Cat Form)'}, 
 	{ rejuvSpam, '!buff(Cat Form)'},
 	--{ encounters}, -- Testing
