@@ -410,7 +410,7 @@ end)
 ---------------------------------------
 NeP.DSL:Register('aimedshotwindow', function ()
 	if NeP.DSL:Get('debuff.duration')('target', 'Vulnerable') > NeP.DSL:Get('spell.casttime')('player', 'Aimed Shot') then
-		print('True Mother Fucker')
+		--print('True Mother Fucker')
 		return true
 		else return false
 	end
