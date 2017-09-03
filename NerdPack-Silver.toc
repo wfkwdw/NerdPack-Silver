@@ -1,6 +1,6 @@
 ## Title: |r[|cffADFF2FSilver|r] Combat Routines
 ## Notes: Custom Combat Routines for NerdPack
-## Interface: 70200
+## Interface: 70300
 ## Author: Silver
 ## Dependencies: NerdPack
 
@@ -29,3 +29,7 @@ rotations\demonhunter\Havoc.lua
 
 rotations\mage\frost.lua
 rotations\warrior\protection.lua
+
+rotations\deathknight\frost.lua
+rotations\deathknight\unholy.lua
+rotations\deathknight\blood.lua
