@@ -118,6 +118,7 @@ NeP.DSL:Register('bosscheck', function()
 		end
 end)
 
+-- Needs to stop rotation when target has a buff/debuff preventing dmg
 NeP.DSL:Register('immunitycheck', function ()
 	for i=1,40 do
 		local name,_,_,_,_,expires = UnitDebuff('target',i)
@@ -137,32 +138,8 @@ NeP.DSL:Register('ignorepain', function ()
     for i=1,40 do
 		local name,_,_,_,_,_,_,_,_,_,_,_,_,_,_,value = UnitBuff('player',i)
 		if name == 'Ignore Pain' then
-			print(value)
+			--print(value)
 			return value
-		end
-	end
-	return 0
-end)
-
--- Rend workaround
-NeP.DSL:Register('rend', function ()
-	for i=1,40 do
-		local name,_,_,_,_,expires = UnitDebuff('target',i)
-		if name == 'Rend' then
-			local endTime = expires - GetTime()
-			return endTime
-		end
-	end
-	return 0
-end)
-
--- Enrage workaround
-NeP.DSL:Register('enrage', function ()
-	for i=1,40 do
-		local name,_,_,_,_,expires = UnitBuff('player',i)
-		if name == 'Enrage' then
-			local endTime = expires - GetTime()
-			return endTime
 		end
 	end
 	return 0
