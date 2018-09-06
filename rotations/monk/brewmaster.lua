@@ -22,7 +22,7 @@ local exeOnLoad = function()
 	print('|cffADFF2F --- |rMost Talents Supported')
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
-	
+
 local legionEvents = {
 	----------------
 	---- 5 Mans ----
@@ -74,62 +74,35 @@ local legionEvents = {
 
 
 local interrupts = {
-	{ 'Rebuke'},
-	{ 'Hammer of Justice', 'spell(Rebuke).cooldown > gcd'},
-	{ 'Arcane Torrent', 'target.range<=8&spell(Rebuke).cooldown>gcd&!prev_gcd(Rebuke)'},
+
 }
 
 local activeMitigation = {
-	-- Shield of the Righteous
-	{ 'Shield of the Righteous', 'player.spell(Shield of the Righteous).charges = 3 & !player.buff & target.range <= 8 & target.threat == 100 & !talent(7,2)'},
-	{ 'Shield of the Righteous', 'player.spell(Shield of the Righteous).charges = 3 & !player.buff & target.range <= 8 & target.threat == 100 & talent(7,2) & !player.spell(Seraphim).cooldown = 0'},
-	{ 'Shield of the Righteous', '!player.buff & player.health <= UI(sotr) & player.spell.charges >= 2 & target.range <= 8 & target.threat == 100'},
-	
-	-- Light of the Protector
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'player'},
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'tank'},
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'tank2'},
-	{ 'Light of the Protector', 'health <= UI(lotp)', 'lowest'},
+	{ 'Ironskin Brew', 'charges >= 3'},
 }
 
 local cooldowns = {
 	{ legionEvents},
-	
-	{ 'Bastion of Light', 'player.spell(Shield of the Righteous).charges < 1'},
-	
-	-- All health based. Uncheck in UI to use only manually
-	{ 'Eye of Tyr', 'UI(eye_check) & player.health <= UI(eye_spin) & !player.buff(Ardent Defender) & target.range <= 8 & !player.buff(Guardian of Ancient Kings)'}, 
-	{ 'Ardent Defender', 'UI(ad_check) & player.health <= UI(ad_spin) & !target.debuff(Eye of Tyr) & !player.buff(Guardian of Ancient Kings)'},
-	{ 'Guardian of Ancient Kings', 'UI(ak_check) & player.health <= UI(ak_spin) & !target.debuff(Eye of Tyr) & !player.buff(Ardent Defender)'},
-
-	{ 'Seraphim', 'player.spell(Shield of the Righteous).charges > 2'},
-	
-	{ 'Avenging Wrath', '!talent(7,2) & target.range <= 10'},
-	{ 'Avenging Wrath', 'talent(7,2) & player.buff(Seraphim) & target.range <= 10'},
-
-	-- Add UI toggle for LoH
-	{ 'Lay on Hands', 'player.health < 15'},
-	--{ 'Lay on Hands', 'lowest.health < 15'},
-	
-	-- Add UI toggle for trinket
-	{ '#trinket2', 'player.health <= 75'},
 }
 
-local rotation = {
-	{ 'Consecration', '!player.buff & player.area(8).enemies >= 1'},
-	{ 'Avenger\'s Shield', 'talent(2,3) & player.spell(Judgment).charges < 1'},
-	{ 'Avenger\'s Shield', 'target.area(10).enemies >= 2'},
-	{ 'Blinding Light', 'player.area(10).enemies >= 2'},
-	{ 'Judgment'},
-	{ 'Blessed Hammer', 'talent(1,2) & player.area(12).enemies >= 1 & !player.lastcast' }, 
-	{ 'Consecration', 'player.area(8).enemies >= 1'},
-	{ 'Avenger\'s Shield'},
-	{ 'Blessed Hammer', 'talent(1,2) & player.area(12).enemies >= 1' }, 
-	{ 'Hammer of the Righteous', '!talent(1,2)'},
+local rotation = {	
+	-- AoE
+	{ 'Breath of Fire', 'toggle(AoE) & equipped(Sal\'salabim\'s Lost Tunic) & target.range <= 8'}, -- legendary chest (Sal'salabim's Lost Tunic) are equipped
+	{ 'Keg Smash', 'toggle(AoE) & player.area(8).enemies >= 2'},
+	{ 'Rushing Jade Wind', 'toggle(AoE) & player.area(8).enemies >= 2 & target.range <= 8'},
+	{ 'Chi burst', 'toggle(AoE) & talent(1,1) & player.area(8).enemies >= 2'},
+	{ 'Breath of Fire', 'toggle(AoE) & player.area(8).enemies >= 2'},
+	
+	--Solo
+	{ 'Keg Smash'},		
+	{ 'Blackout Strike', 'target.range <= 5'},
+	{ 'Breath of Fire', 'equipped(Sal\'salabim\'s Lost Tunic) & target.range <= 8'},         -- legendary chest (Sal'salabim's Lost Tunic) are equipped								
+	{ 'Tiger Palm', 'player.energy >= 65'},
+	{ 'Breath of Fire'},									          
+	{ 'Rushing Jade Wind'},		
 }
 
 local inCombat = {
-	{ '/targetenemy [dead][noharm]', '{target.dead || !target.exists} & !player.area(40).enemies=0'},
 	{ '/startattack', '!isattacking & target.exists'},
 	{ target},
 	{ interrupts, 'target.interruptAt(50)'},
@@ -142,10 +115,12 @@ local outCombat = {
 	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
 }
 
-NeP.CR:Add(66, {
-	name = '[Silver] Paladin - Protection',
+NeP.CR:Add(268, {
+	name = '[Silver] Monk - Brewmaster',
 	  ic = inCombat,
 	 ooc = outCombat,
 	 gui = GUI,
+ wow_ver = '7.3.5',
+ nep_ver = '1.11',
 	load = exeOnLoad
 })

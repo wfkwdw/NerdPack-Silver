@@ -35,14 +35,14 @@ local keybinds = {
 }
 
 local rotation = {
-	{ 'Murder of Crows', '!player.spell(Bestial Wrath).cooldown <= 30'},
-	{ 'Multi-Shot', 'target.area(8).enemies >= 5 & pet.buff(Beast Cleave).duration <= gcd'},
-	{ 'Titan\'s Thunder', 'player.lastcast(Dire Beast) || talent(2,2)'},
-	{ 'Dire Beast', '!player.spell(Bestial Wrath).cooldown <= 3'},
-	{ 'Bestial Wrath'},
+	{ 'Barbed Shot', 'pet.buff(Frenzy).duration <= 1', 'target'}, 
+	{ 'Chimaera Shot'}, 
 	{ 'Kill Command'},
-	{ 'Multi-Shot', 'target.area(8).enemies >= 2 & pet.buff(Beast Cleave).duration <= gcd'}, 
-	{ '/cast Cobra Shot', 'player.focus > 90 || player.focus >=  60 & player.spell(Kill Command).cooldown > 3'},
+	{ 'A murder of Crows'}, 
+	
+	{ 'Dire Beast'},
+	
+	{ 'Cobra Shot', 'player.spell(Kill Command).cooldown >= 2.5', 'target'},
 }
 
 local inCombat = {

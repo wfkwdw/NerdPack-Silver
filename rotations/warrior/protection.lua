@@ -23,45 +23,75 @@ local exeOnLoad = function()
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
 
-local legionEvents = {
-
+local keybinds = {
+	{ 'Heroic Leap', 'keybind(lcontrol)', 'target.ground'}
 }
 
 local interrupts = {
 	{ 'Pummel'},
-	{ 'Arcane Torrent', 'target.range<=8&spell(Rebuke).cooldown > gcd & !prev_gcd(Rebuke)'},
+}
+
+local utility = {
+	{ 'Battle Shout', 'player.buff.duration <= 600'},
+}
+
+local interrupts = {
+	{ 'Pummel'},
+	{ 'Arcane Torrent', 'target.range <=8 & spell(Pummel).cooldown > gcd & !prev_gcd(Pummel)'},
 }
 
 local activeMitigation = {
 	{ 'Victory Rush', 'player.health <= 70'},
-	{ 'Ignore Pain', 'player.buff(Vengeance: Ignore Pain)'},
-	{ 'Ignore Pain', 'ignorepain <= { player.health.max * 0.2 }'},
+	
+	{ 'Shield Block', 'player.spell.charges >= 2', 'target'},
+	{ 'Shield Block', '!player.buff & player.incdmg.phys(4) >= { player.health.max * 0.2 }'},
+	
+	{ 'Last Stand', 'player.health <= 50 & player.incdmg.phys(4) >= { player.health.max * 0.6 }'}, 
 }
 
 local cooldowns = {
+	{ 'Stoneform', 'player.incdmg(4) >= { player.health.max * 0.2 }'},
+	{ 'Avatar'}, 
+	-- { 'Beserker Rage'},
+}
 
+local avatarRotation = {
+	{ 'Shield Slam'},
+	{ 'Thunder Clap', 'range <= 8'},
+	{ 'Revenge', 'player.buff(Revenge!)'},
+	{ 'Ignore Pain', 'ignorepain < { player.health.max * 0.2 }'},
+	{ 'Devastate'},	
+}
+
+local aoeRotation = {
+	{ 'Thunder Clap', 'range < 8', 'target'},
+	{ 'Revenge'},
+	{ 'Shield Slam'},
+	{ 'Ignore Pain', 'ignorepain < { player.health.max * 0.2 }'},
+	{ 'Devastate'},
 }
 
 local rotation = {
 	{ 'Shield Slam'},
-	{ 'Revenge', 'player.buff(Vengeance: Revenge)'},
 	{ 'Thunder Clap', 'range <= 8'},
-	{ 'Revenge', 'player.buff(Revenge)'},
+	{ 'Revenge', 'player.buff(Revenge!)'},
+	{ 'Ignore Pain', 'ignorepain < { player.health.max * 0.2 }'},
 	{ 'Devastate'},
 }
 
 local inCombat = {
-	{ '/targetenemy [dead][noharm]', '{target.dead || !target.exists} & !player.area(40).enemies=0'},
 	{ '/startattack', '!isattacking & target.exists'},
-	{ target},
-	{ interrupts, 'target.interruptAt(50)'},
+	{ interrupts, 'target.interruptAt(75)'},
 	{ activeMitigation},
-	{ cooldowns, 'toggle(cooldowns) & target.range <= 10'},
-	{ rotation, 'target.infront'}
+	{ cooldowns, 'toggle(cooldowns) & target.inmelee'},
+	{ 'Heroic Throw', '!inmelee', 'target'}, 
+	{ avatarRotation, 'player.buff(Avatar) & talent(3,2)'},
+	{ aoeRotation, 'player.area(8).enemies >= 2 & target.infront'},
+	{ rotation, 'player.area(8).enemies < 2 & target.infront'},
 }
 
 local outCombat = {
-	{ '#Potion of Prolonged Power', '!player.buff & pull_timer <= 2'},
+
 }
 
 NeP.CR:Add(73, {

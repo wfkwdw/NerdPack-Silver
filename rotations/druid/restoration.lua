@@ -99,7 +99,7 @@ local emergency = {
 
 local rejuvSpam = {
 	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank1'},
-	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank2)'},
+	{ 'Rejuvenation', 'health <= UI(trejuv) & !buff', 'tank2'},
 	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest'},
 	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest2'},
 	{ 'Rejuvenation', 'health <= UI(lrejuv) & !buff', 'lowest3'},
