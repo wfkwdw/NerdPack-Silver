@@ -4,9 +4,10 @@ local GUI = {
 	{type = 'spinner', text = 'Use 2nd Charge', key = 'sotr', default_spin = 75},
 	{type = 'ruler'},{type = 'spacer'},
 	
-	-- Light of the Protector
-	{type = 'header', text = 'Light of the Protector', align = 'center'},
-	{type = 'spinner', text = 'Light of the Protector', key = 'lotp', default_spin = 65},
+	-- Survival
+	{type = 'header', text = 'Survival', align = 'center'},
+	{type = 'spinner', text = 'Victory Rush', key = 'vr', default_spin = 75},
+	{type = 'spinner', text = 'Enraged Regeneration', key = 'er', default_spin = 40},
 	{type = 'ruler'},{type = 'spacer'},
 	
 	--Cooldowns
@@ -32,7 +33,35 @@ local interrupts = {
 }
 
 local utility = {
-	{ 'Battle Shout', 'player.buff.duration <= 600'},
+	-- Check player
+	{ 'Battle Shout', 'buff.duration <= 600', 'player'},
+	
+	-- Check party/raid
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest2'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest3'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest4'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest5'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest6'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest7'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest8'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest9'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest10'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest11'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest12'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest13'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest14'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest15'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest16'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest17'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest18'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest19'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest20'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest21'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest22'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest23'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest24'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest25'},
 }
 
 local cooldowns = {
@@ -41,8 +70,8 @@ local cooldowns = {
 }
 
 local survival = {
-	{ 'Victory Rush', 'player.health <= 80', 'target'}, 
-	{ 'Enraged Regeneration', 'player.health <= 40'}, 
+	{ 'Victory Rush', 'player.health <= UI(vr)', 'target'}, 
+	{ 'Enraged Regeneration', 'player.health <= UI(er)'}, 
 }
 
 local rotation = {

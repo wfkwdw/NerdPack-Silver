@@ -18,17 +18,45 @@ local GUI = {
 
 local exeOnLoad = function()
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
-	print('|cffADFF2F --- |rSilver Warrior |cffADFF2FProtection |r')
-	print('|cffADFF2F --- |rMost Talents Supported')
+	print('|cffADFF2F --- |rSilver Warrior |cffADFF2FArms |r')
+	print('|cffADFF2F --- |rWIP')
 	print('|cffADFF2F ----------------------------------------------------------------------|r')
 end
 
-local legionEvents = {
-
-}
-
 local interrupts = {
 	{ 'Pummel'},
+}
+
+local utility = {
+	-- Check player
+	{ 'Battle Shout', 'buff.duration <= 600', 'player'},
+	
+	-- Check party/raid
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest2'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest3'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest4'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest5'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest6'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest7'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest8'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest9'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest10'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest11'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest12'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest13'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest14'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest15'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest16'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest17'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest18'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest19'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest20'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest21'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest22'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest23'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest24'},
+	{ 'Battle Shout', 'buff.duration <= 600', 'lowest25'},
 }
 
 local survival = {
@@ -91,6 +119,7 @@ local rotation = {
 local inCombat = {
 	{ '/startattack', '!isattacking & target.exists'},
 	{ interrupts, 'target.interruptAt(75)'},
+	{ utility}, 
 	{ survival}, 
 	{ cooldowns, 'toggle(cooldowns)'}, 
 	{ cleaveRotation, 'player.area(8).enemies > 1 & player.area(8).enemies < 4 & toggle(aoe)'}, 
