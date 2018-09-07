@@ -31,6 +31,10 @@ local interrupts = {
 	{ 'Pummel'},
 }
 
+local survival = {
+	{ 'Victory Rush', 'player.health <= 80', 'target'}, 
+}
+
 local cooldowns = {
 
 }
@@ -87,6 +91,7 @@ local rotation = {
 local inCombat = {
 	{ '/startattack', '!isattacking & target.exists'},
 	{ interrupts, 'target.interruptAt(75)'},
+	{ survival}, 
 	{ cooldowns, 'toggle(cooldowns)'}, 
 	{ cleaveRotation, 'player.area(8).enemies > 1 & player.area(8).enemies < 4 & toggle(aoe)'}, 
 	{ aoeRotation, 'player.area(8).enemies >= 4 & toggle(aoe)'},
