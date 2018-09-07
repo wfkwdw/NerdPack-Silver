@@ -110,4 +110,6 @@ NeP.CR:Add(71, {
 	 ooc = outCombat,
 	 gui = GUI,
 	load = exeOnLoad
+ wow_ver = '8.0.1',
+ nep_ver = '1.11',
 })
