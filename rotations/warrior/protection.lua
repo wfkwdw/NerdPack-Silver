@@ -85,6 +85,7 @@ local inCombat = {
 	{ activeMitigation},
 	{ cooldowns, 'toggle(cooldowns) & target.inmelee'},
 	{ 'Heroic Throw', '!inmelee', 'target'}, 
+	{ 'Ignore Pain', 'rage >= 90', 'player'}, -- Prevent rage cap
 	{ avatarRotation, 'player.buff(Avatar) & talent(3,2)'},
 	{ aoeRotation, 'player.area(8).enemies >= 2 & target.infront'},
 	{ rotation, 'player.area(8).enemies < 2 & target.infront'},

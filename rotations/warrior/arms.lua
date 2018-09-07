@@ -35,8 +35,35 @@ local cooldowns = {
 
 }
 
+local cleaveRotation = {
+	{ 'Sweeping Strikes', 'player.spell(Bladestorm).cooldown > 5', 'target'},
+	{ 'Skullsplitter', 'player.rage > 60 & player.spell(Bladestorm).cooldown > 5', 'target'},
+	{ 'Avatar', 'player.spell(Colossus Smash).cooldown = 0', 'target'}, 
+	{ 'Colossus Smash'},
+	{ 'Bladestorm', 'debuff(Colossus Smash)', 'target'},
+	{ 'Execute'},
+	{ 'Mortal Strike'},
+	{ 'Overpower'},
+	{ 'Slam', 'player.buff(Sweeping Strikes)', 'target'},
+	{ 'Whirlwind'},
+}
+
+local aoeRotation = {
+	{ 'Sweeping Strikes', 'player.spell(Bladestorm).cooldown > 5', 'target'},
+	{ 'Skullsplitter', 'player.rage > 60 & player.spell(Bladestorm).cooldown > 5', 'target'},
+	{ 'Avatar', 'player.spell(Colossus Smash).cooldown = 0', 'target'}, 
+	{ 'Colossus Smash'},
+	{ 'Bladestorm', 'debuff(Colossus Smash)', 'target'},
+	{ 'Execute', 'player.buff(Sweeping Strikes)', 'target'},
+	{ 'Mortal Strike', 'player.buff(Sweeping Strikes)', 'target'},
+	{ 'Whirlwind', 'debuff(Colossus Smash)', 'target'},
+	{ 'Overpower'},
+	{ 'Whirlwind'},
+} 
+
 local executeRotation = {
 	{ 'Skullsplitter', 'player.rage < 60', 'target'},
+	{ 'Avatar', 'player.spell(Colossus Smash).cooldown = 0', 'target'}, 
 	{ 'Colossus Smash'},
 	{ 'Bladestorm', 'player.rage < 30', 'target'},
 	{ 'Mortal Strike', '{ talent(7,2) & player.buff(Overpower).count >= 2 } ||  !talent(7,2) & player.buff(Executioner\'s Precision).count >= 2', 'target'}, 
@@ -45,8 +72,9 @@ local executeRotation = {
 }
 
 local rotation = {
-	{ 'Skullsplitter', 'player.rage < 60', 'target'},
+	{ 'Skullsplitter', 'player.rage < 60 & player.spell(Bladestorm).cooldown > 0', 'target'},
 	{ 'Rend', 'debuff.duration <= 4 & !debuff(Colossus Smash)', 'target'},
+	{ 'Avatar', 'player.spell(Colossus Smash).cooldown = 0', 'target'}, 
 	{ 'Colossus Smash'},
 	{ 'Execute', 'player.buff(Sudden Death)', 'target'},
 	{ 'Mortal Strike'},
@@ -60,7 +88,9 @@ local inCombat = {
 	{ '/startattack', '!isattacking & target.exists'},
 	{ interrupts, 'target.interruptAt(75)'},
 	{ cooldowns, 'toggle(cooldowns)'}, 
-	{ executeRotation, 'inmelee & { target.health <= 20 & !talent(3,1) || target.health <= 35 & talent(3,1)}'}, 
+	{ cleaveRotation, 'player.area(8).enemies > 1 & player.area(8).enemies < 4 & toggle(aoe)'}, 
+	{ aoeRotation, 'player.area(8).enemies >= 4 & toggle(aoe)'},
+	{ executeRotation, '{ target.health <= 20 & !talent(3,1) || target.health <= 35 & talent(3,1)}'}, 
 	{ rotation, 'target.health > 20 & !talent(3,1) || target.health > 35 & talent(3,1)'},
 	{ 'Heroic Throw', 'range > 8 & infront', 'target'}, 
 }
